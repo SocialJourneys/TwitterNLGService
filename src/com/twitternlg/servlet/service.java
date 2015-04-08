@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class NLGService
  */
-@WebServlet("/NLGService")
-public class NLGService extends HttpServlet {
+@WebServlet("/")
+public class service extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public NLGService() {
+    public service() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -37,10 +37,9 @@ public class NLGService extends HttpServlet {
     	TweetFactory t = new TweetFactory();
     	
     	String event = request.getParameter("event");
-    	String bus_services = request.getParameter("bus-services");
+    	String bus_services = request.getParameter("bus_services");
     	String problem = request.getParameter("problem");
     	String location = request.getParameter("location");     
-    	String road = request.getParameter("road");
     	String diversion_road = request.getParameter("diversion_road"); 
     	//3)Services 1/2 / X40 from BOD are being diverted along East North St, Commerce St, Virginia St, Guild St and Bridge St.
     	String duration = request.getParameter("duration");
@@ -56,6 +55,10 @@ public class NLGService extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+
+    	out.println("hello from server");
+
 		// TODO Auto-generated method stub
 	}
 
