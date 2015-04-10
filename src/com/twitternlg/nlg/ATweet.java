@@ -1,3 +1,7 @@
+/*
+ * Annotated Tweet class
+ */
+
 package com.twitternlg.nlg;
 
 public class ATweet {
@@ -25,6 +29,9 @@ public class ATweet {
 
 	public String getEvent(){
 		return this.event;
+	}
+	public String getBus_services(){
+		return this.bus_services;
 	}
 }
 
