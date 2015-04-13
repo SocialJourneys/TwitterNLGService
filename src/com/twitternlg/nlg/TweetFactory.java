@@ -4,8 +4,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import simplenlg.features.Feature;
@@ -44,11 +46,12 @@ public class TweetFactory {
 
     } 
 	
-	public String generateTweetString(Map <String,Object> RDFdata1){
-	    Map <String,Object> RDFdata = createRDFData();
-	    SPhraseSpec tweet = generateTweet((Map <String,Object>)RDFdata.get("diversion_tweet_1"));
-
-//	    SPhraseSpec tweet = generateTweet(RDFdata);
+	public String generateTweetString(Map <String,Object> RDFdata){
+	    //Map <String,Object> RDFdata = createRDFData();
+//	    SPhraseSpec tweet = generateTweet((Map <String,Object>)RDFdata.get("diversion_tweet_1"));
+	    
+		
+	    SPhraseSpec tweet = generateTweet(RDFdata);
 	    //SPhraseSpec tweet = generateTweet( (Map <String,Object>)RDFdata.get("delay_tweet"));
 	     
 	    String output = realiser.realiseSentence(tweet);
@@ -289,9 +292,11 @@ public class TweetFactory {
 			
 		    SPhraseSpec tweet = nlgFactory.createClause();
 		    //add bus info
-		    ArrayList<String>bus_services = (ArrayList<String>)RDFdata.get("bus-services");
+		    String bus_services = (String)RDFdata.get("bus-services");
+		    List<String> buses_list = new ArrayList<String>(Arrays.asList(bus_services.split(",")));
+
 		    CoordinatedPhraseElement buses = nlgFactory.createCoordinatedPhrase();
-		    for(String bus: bus_services){
+		    for(String bus: buses_list){
 		    	NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
 		    	buses.addCoordinate(bus_obj);
 		    }

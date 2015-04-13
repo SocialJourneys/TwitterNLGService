@@ -37,22 +37,6 @@ public class service extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		PrintWriter out = response.getWriter();
-		
-    	
-    	String event = request.getParameter("event");
-    	String bus_services = request.getParameter("bus_services");
-    	String problem = request.getParameter("problem");
-    	String location = request.getParameter("location");     
-    	String diversion_road = request.getParameter("diversion_road"); 
-    	//3)Services 1/2 / X40 from BOD are being diverted along East North St, Commerce St, Virginia St, Guild St and Bridge St.
-    	String duration = request.getParameter("duration");
-    	String date_start = request.getParameter("date_start");
-    	String date_end = request.getParameter("date_end");
-    	String service_status = request.getParameter("service_status");
-    	
-    	//out.println(t.generateTweetString(null));
-
 	}
     
 	/**
@@ -70,17 +54,38 @@ public class service extends HttpServlet {
 	    response.setContentType("application/json");
 	 // Get the printwriter object from response to write the required json object to the output stream      
 	 
-	   /* out.println(tweet.getEvent());
-	    out.println(tweet.getBus_services());*/
-	    
+	/*    out.println(tweet.getEvent());
+	    out.println(tweet.getBus_services());
+	  */
+	    //tweet.print(out);
     	TweetFactory t = new TweetFactory();
-		Map<String,Object> RDFdata = new HashMap<String,Object>();
-		RDFdata.put(, value)
+    	Map<String,Object> RDFdata = prepareInput(tweet);
     	t.generateTweetString(RDFdata);
 
 	}
 
-	private Map<String,Object> prepareRDF(){
-		return null;
+	//todo: remove this datatype conversion
+	private Map<String,Object> prepareInput(ATweet tweet){
+		Map<String,Object> RDFdata = new HashMap<String,Object>();
+		
+		RDFdata.put("event",tweet.getEvent());
+		RDFdata.put("bus-services",tweet.getBus_services());
+		RDFdata.put("problem",tweet.getProblem());
+		RDFdata.put("primary-location",tweet.getLocation());
+		RDFdata.put("diversion-road",tweet.getDiversion_road());
+		RDFdata.put("duration",tweet.getDuration());
+		RDFdata.put("start-day",tweet.getStart_day());
+		RDFdata.put("start-time",tweet.getStart_time());
+		RDFdata.put("start-date",tweet.getStart_date());
+		RDFdata.put("start-month",tweet.getStart_month());
+		RDFdata.put("start-year",tweet.getStart_year());
+		RDFdata.put("end-day",tweet.getEnd_day());
+		RDFdata.put("end-time",tweet.getEnd_time());
+		RDFdata.put("end-date",tweet.getEnd_date());
+		RDFdata.put("end-month",tweet.getEnd_month());
+		RDFdata.put("end-year",tweet.getEnd_year());
+		RDFdata.put("service_status",tweet.getService_status());
+
+		return RDFdata;
 	}
 }
