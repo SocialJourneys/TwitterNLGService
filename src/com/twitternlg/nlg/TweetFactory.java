@@ -106,7 +106,7 @@ public class TweetFactory {
 
 	    tweet.setSubject(buses);
 
-	    tweet.setObject(RDFdata.get("problem").toString());
+	    tweet.setObject(RDFdata.get("event").toString());
 	//  p.setVerb("effect"); //minimizing the characters by dropping out the verb
 	    
 	    //add the location info
@@ -234,7 +234,7 @@ public class TweetFactory {
 	}
 	
 	/*
-	 * creates date formatter for the input date
+	 * creates date formatter for the input date : e.g mm, dd, yyyy or just dd, yyyy
 	 */
 	private ArrayList<Object> createDateFormat(Map<String,Object>RDFdata, String start_end){
 	    String formatter_pattern="";
@@ -281,6 +281,29 @@ public class TweetFactory {
 		return arr;
 	}
 
+	/*
+	 * Generate bus services phrase
+	 */
+	private CoordinatedPhraseElement generateBusServicesPhrase(String buses_string){
+	    List<String> buses_list = new ArrayList<String>(Arrays.asList(buses_string.split(",")));
+
+	    CoordinatedPhraseElement buses = nlgFactory.createCoordinatedPhrase();
+	    for(String bus: buses_list){
+	    	NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
+	    	buses.addCoordinate(bus_obj);
+	    }
+
+		return buses;
+	}
+	
+	private PPPhraseSpec generatePrimaryLocationPhrase(String primary_location){
+	    NPPhraseSpec place = nlgFactory.createNounPhrase(primary_location);
+	    PPPhraseSpec primary_location_phrase = nlgFactory.createPrepositionPhrase();
+	    primary_location_phrase.addComplement(place);
+	    primary_location_phrase.setPreposition("at");
+	    
+	    return primary_location_phrase;
+	}
 	
 		private SPhraseSpec generateDiversionTweet(Map<String,Object>RDFdata){
 			
@@ -292,14 +315,8 @@ public class TweetFactory {
 			
 		    SPhraseSpec tweet = nlgFactory.createClause();
 		    //add bus info
-		    String bus_services = (String)RDFdata.get("bus-services");
-		    List<String> buses_list = new ArrayList<String>(Arrays.asList(bus_services.split(",")));
-
-		    CoordinatedPhraseElement buses = nlgFactory.createCoordinatedPhrase();
-		    for(String bus: buses_list){
-		    	NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
-		    	buses.addCoordinate(bus_obj);
-		    }
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
 
 		    tweet.setSubject(buses);
 
@@ -307,12 +324,9 @@ public class TweetFactory {
 		//  p.setVerb("effect"); //minimizing the characters by dropping out the verb
 		    
 		    //add the location info
-		    NPPhraseSpec place = nlgFactory.createNounPhrase(RDFdata.get("primary-location").toString());
-		    PPPhraseSpec pp = nlgFactory.createPrepositionPhrase();
-		    pp.addComplement(place);
-		    pp.setPreposition("at");
-
-		    tweet.addComplement(pp);
+		    String primary_location_string = RDFdata.get("primary-location").toString();
+		    PPPhraseSpec primary_location_phrase = generatePrimaryLocationPhrase(primary_location_string);
+		    tweet.addComplement(primary_location_phrase);
 
 		    /*
 		     *
