@@ -165,7 +165,7 @@ public class TweetFactory {
 			case PRESENT:{
 				if(end_date.length()>0)
 					date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
-				else
+				else if(start_date.length()>0)
 					date_phrase.setFeature(Feature.COMPLEMENTISER, "since");
 				break;
 			}
