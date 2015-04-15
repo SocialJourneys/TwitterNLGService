@@ -60,8 +60,8 @@ public class service extends HttpServlet {
 	    //tweet.print(out);
     	TweetFactory t = new TweetFactory();
     	Map<String,Object> RDFdata = prepareInput(tweet);
-    	t.generateTweetString(RDFdata);
-
+    	String message = t.generateTweetString(RDFdata);
+    	out.println(message);
 	}
 
 	//todo: remove this datatype conversion

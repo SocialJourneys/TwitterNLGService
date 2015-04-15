@@ -68,7 +68,7 @@ public class TweetFactory {
 			
 		    switch(RDFdata.get("event").toString()){
 	    	case "diversion":
-	    		tweet = generateDiversionTweet1(RDFdata);
+	    		tweet = generateDiversionTweet(RDFdata);
 	    		break;
 	    	case "delay":
 	    		tweet = generateDelayTweet(RDFdata);
@@ -87,7 +87,7 @@ public class TweetFactory {
 			
 		}
 
-	private SPhraseSpec generateDiversionTweet1(Map<String,Object>RDFdata){
+	private SPhraseSpec generateDiversionTweet2(Map<String,Object>RDFdata){
 		
 	    /*
 	     * Assumption: Every tweet will have two parts - info about the bus and place, info about the problem and date
@@ -133,7 +133,7 @@ public class TweetFactory {
 	   
 	    //add the start end date info
 
-	    SPhraseSpec date = createDateClause(RDFdata);
+	    SPhraseSpec date = createDatePhrase(RDFdata);
 	    
 	    tweet.addComplement(date);
 	    
@@ -143,7 +143,7 @@ public class TweetFactory {
 	    return tweet;
 	}
 
-	private SPhraseSpec createDateClause(Map<String,Object>RDFdata){
+	private SPhraseSpec createDatePhrase(Map<String,Object>RDFdata){
 		Tense tense = (Tense)determineClauseTense(RDFdata);
 		
 		
@@ -296,8 +296,8 @@ public class TweetFactory {
 		return buses;
 	}
 	
-	private PPPhraseSpec generatePrimaryLocationPhrase(String primary_location){
-	    NPPhraseSpec place = nlgFactory.createNounPhrase(primary_location);
+	private PPPhraseSpec generatePrimaryLocationPhrase(String primary_location_string){
+	    NPPhraseSpec place = nlgFactory.createNounPhrase(primary_location_string);
 	    PPPhraseSpec primary_location_phrase = nlgFactory.createPrepositionPhrase();
 	    primary_location_phrase.addComplement(place);
 	    primary_location_phrase.setPreposition("at");
@@ -305,48 +305,41 @@ public class TweetFactory {
 	    return primary_location_phrase;
 	}
 	
+	private SPhraseSpec generateProblemReasonPhrase(String problem_reason_string){
+	    SPhraseSpec problem_phrase = nlgFactory.createClause();
+	    problem_phrase.setObject(problem_reason_string);
+	    problem_phrase.setFeature(Feature.COMPLEMENTISER, "due to");
+	    
+	    return problem_phrase;
+	}
+	
 		private SPhraseSpec generateDiversionTweet(Map<String,Object>RDFdata){
 			
-		    /*
-		     * Assumption: Every tweet will have two parts - info about the bus and place, info about the problem and date
-		     *
-		     *create the first part
-		     */
-			
 		    SPhraseSpec tweet = nlgFactory.createClause();
-		    //add bus info
+		   
+		    //add bus phrase
 		    String bus_services_string = (String)RDFdata.get("bus-services");
 		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
 
 		    tweet.setSubject(buses);
 
-		    tweet.setObject(RDFdata.get("problem").toString());
-		//  p.setVerb("effect"); //minimizing the characters by dropping out the verb
+		    //add the reason phrase - diversion,delay etc
+		    tweet.setObject(RDFdata.get("event").toString());
 		    
-		    //add the location info
+		    //add the location phrase
 		    String primary_location_string = RDFdata.get("primary-location").toString();
 		    PPPhraseSpec primary_location_phrase = generatePrimaryLocationPhrase(primary_location_string);
 		    tweet.addComplement(primary_location_phrase);
-
-		    /*
-		     *
-		     *create the second part - problem and date
-		     */
 		    
-		    //add the problem info
-		    //NPPhraseSpec q = nlgFactory.createNounPhrase(RDFdata.get("reason"));
-		    SPhraseSpec q = nlgFactory.createClause();
-		    q.setObject(RDFdata.get("reason").toString());
-		    q.setFeature(Feature.COMPLEMENTISER, "due to");
-		    q.setFeature(Feature.TENSE, Tense.PRESENT);
+		    //add the problem phrase
+		    SPhraseSpec problem_phrase = generateProblemReasonPhrase(RDFdata.get("problem").toString());
 		    
-		    tweet.addComplement(q);
+		    tweet.addComplement(problem_phrase);
 		   
-		    //add the start end date info
-		    SPhraseSpec date = nlgFactory.createClause();
-		    date.setObject(RDFdata.get("end-date").toString());
-		    date.setFeature(Feature.COMPLEMENTISER, "until");
-
+		    //add the date phrase
+		    
+		    SPhraseSpec date = createDatePhrase(RDFdata);
+		    
 		    tweet.addComplement(date);
 		    
 		    //String output = realiser.realiseSentence(tweet);
