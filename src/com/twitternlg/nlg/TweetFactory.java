@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
@@ -146,42 +147,53 @@ public class TweetFactory {
 	private SPhraseSpec createDatePhrase(Map<String,Object>RDFdata){
 		Tense tense = (Tense)determineClauseTense(RDFdata);
 		
+		SPhraseSpec date_phrase = null;
+
 		
 		String start_date = createDateString(RDFdata,"start");
 		String end_date = createDateString(RDFdata,"end");
 		
-		String full_date = start_date;
-		if(end_date.length()>0)
-			full_date = full_date+" to "+end_date;
-		
-		SPhraseSpec date_phrase = nlgFactory.createClause();
-		date_phrase.setObject(full_date);
-		
-		switch(tense){
-			case PAST:{
-				date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
-				break;
-			}
-			case PRESENT:{
-				if(end_date.length()>0)
+		if(start_date.length()>0 || end_date.length()>0){
+			
+			date_phrase = nlgFactory.createClause();
+			
+			String full_date = start_date;
+			
+			if(start_date.length()>0 && end_date.length()>0)
+				full_date = full_date+" to "+end_date;
+			else if (start_date.length()<=0 && end_date.length()>0)
+				full_date = end_date;
+			
+			date_phrase.setObject(full_date);
+			
+			switch(tense){
+				case PAST:{
 					date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
-				else if(start_date.length()>0)
-					date_phrase.setFeature(Feature.COMPLEMENTISER, "since");
+					break;
+				}
+				case PRESENT:{
+					if(end_date.length()>0)
+						date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
+					else if(start_date.length()>0)
+						date_phrase.setFeature(Feature.COMPLEMENTISER, "since");
+					break;
+				}
+				case FUTURE:{
+					if(start_date.length()>0)
+						date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
+					else
+						date_phrase.setFeature(Feature.COMPLEMENTISER, "until");
+	
+					break;
+				}
+				default:
 				break;
+	
 			}
-			case FUTURE:{
-				if(start_date.length()>0)
-					date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
-				else
-					date_phrase.setFeature(Feature.COMPLEMENTISER, "until");
-
-				break;
-			}
-			default:
-			break;
-
 		}
 
+		//date_phrase.setObject(tense.toString());
+		
 		return date_phrase;
 	}
 	
@@ -296,24 +308,43 @@ public class TweetFactory {
 		return buses;
 	}
 	
+	/*
+	 * Generate locations phrase
+	 */
+	
 	private PPPhraseSpec generatePrimaryLocationPhrase(String primary_location_string){
-	    NPPhraseSpec place = nlgFactory.createNounPhrase(primary_location_string);
-	    PPPhraseSpec primary_location_phrase = nlgFactory.createPrepositionPhrase();
-	    primary_location_phrase.addComplement(place);
-	    primary_location_phrase.setPreposition("at");
+		PPPhraseSpec primary_location_phrase = null;
+
+		if(primary_location_string.length()>0){
+			NPPhraseSpec place = nlgFactory.createNounPhrase(primary_location_string);
+		    primary_location_phrase = nlgFactory.createPrepositionPhrase();
+		    primary_location_phrase.addComplement(place);
+		    primary_location_phrase.setPreposition("at"); //todo
+	    }	    
 	    
-	    return primary_location_phrase;
+		return primary_location_phrase;
 	}
 	
+	/*
+	 * Generate problem reason phrase
+	 */
+	
 	private SPhraseSpec generateProblemReasonPhrase(String problem_reason_string){
-	    SPhraseSpec problem_phrase = nlgFactory.createClause();
-	    problem_phrase.setObject(problem_reason_string);
-	    problem_phrase.setFeature(Feature.COMPLEMENTISER, "due to");
+	    SPhraseSpec problem_phrase = null;
 	    
+		if(problem_reason_string.length()>0){
+		    problem_phrase = nlgFactory.createClause();
+		    problem_phrase.setObject(problem_reason_string);
+		    problem_phrase.setFeature(Feature.COMPLEMENTISER, "due to"); //todo
+		 }
+		
 	    return problem_phrase;
 	}
 	
 		private SPhraseSpec generateDiversionTweet(Map<String,Object>RDFdata){
+			
+			Random r = new Random();
+			int i1 = r.nextInt(4);
 			
 		    SPhraseSpec tweet = nlgFactory.createClause();
 		   
@@ -327,20 +358,17 @@ public class TweetFactory {
 		    tweet.setObject(RDFdata.get("event").toString());
 		    
 		    //add the location phrase
-		    String primary_location_string = RDFdata.get("primary-location").toString();
-		    PPPhraseSpec primary_location_phrase = generatePrimaryLocationPhrase(primary_location_string);
-		    tweet.addComplement(primary_location_phrase);
+
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString())!=null)
+		    	tweet.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString()));
 		    
 		    //add the problem phrase
-		    SPhraseSpec problem_phrase = generateProblemReasonPhrase(RDFdata.get("problem").toString());
-		    
-		    tweet.addComplement(problem_phrase);
+		    if(generateProblemReasonPhrase(RDFdata.get("problem").toString())!=null)
+		    	 tweet.addComplement(generateProblemReasonPhrase(RDFdata.get("problem").toString()));		    
 		   
 		    //add the date phrase
-		    
-		    SPhraseSpec date = createDatePhrase(RDFdata);
-		    
-		    tweet.addComplement(date);
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
 		    
 		    //String output = realiser.realiseSentence(tweet);
 		    //System.out.println(output);
