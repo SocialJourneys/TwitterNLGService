@@ -343,9 +343,6 @@ public class TweetFactory {
 	
 		private SPhraseSpec generateDiversionTweet(Map<String,Object>RDFdata){
 			
-			Random r = new Random();
-			int i1 = r.nextInt(4);
-			
 		    SPhraseSpec tweet = nlgFactory.createClause();
 		   
 		    //add bus phrase
@@ -374,6 +371,15 @@ public class TweetFactory {
 		    //System.out.println(output);
 		    
 		    return tweet;
+		}
+		
+		private SPhraseSpec shuffleOrder(Map<String,Object>RDFdata){
+			
+			Random r = new Random();
+			int i1 = r.nextInt(4);
+			
+			
+			return null;
 		}
 		
 		private SPhraseSpec generateDelayTweet(Map<String,Object>RDFdata){
