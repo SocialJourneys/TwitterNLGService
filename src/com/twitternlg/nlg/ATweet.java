@@ -11,7 +11,7 @@ public class ATweet {
 	private String bus_services;
 	private String problem;
 	private String location;
-	private String diversion_road;
+	private String diversion_roads;
 	private String duration;
 	private String start_day;
 	private String start_time;
@@ -25,12 +25,14 @@ public class ATweet {
 	private String end_year;
 	private String service_status;
 	
+	//private String diversion_secondary_locations;
+	
 	public void print(PrintWriter out){
 		out.println("event: "+ event);
 		out.println("bus_services: "+ bus_services);
 		out.println("problem: "+ problem);
 		out.println("location: "+ location);
-		out.println("diversion_road: "+ diversion_road);
+		out.println("diversion_road: "+ diversion_roads);
 		out.println("duration: "+ duration);
 		out.println("start_day: "+ start_day);
 		out.println("start_time: "+ start_time);
@@ -58,7 +60,7 @@ public class ATweet {
 		return this.location;
 	}
 	public String getDiversion_road(){
-		return this.diversion_road;
+		return this.diversion_roads;
 	}
 	public String getDuration(){
 		return this.duration;
