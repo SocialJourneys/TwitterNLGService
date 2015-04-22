@@ -309,6 +309,23 @@ public class TweetFactory {
 	}
 	
 	/*
+	 * Generate diversion secondary locations phrase
+	 */
+	
+	private PPPhraseSpec generateDiversionSecondaryLocationPhrase(String secondary_location_string, String preposition){
+		PPPhraseSpec secondary_location_phrase = null;
+
+		if(secondary_location_string.length()>0){
+			NPPhraseSpec place = nlgFactory.createNounPhrase(secondary_location_string);
+		    secondary_location_phrase = nlgFactory.createPrepositionPhrase();
+		    secondary_location_phrase.addComplement(place);
+		    secondary_location_phrase.setPreposition(preposition); //todo
+	    }	    
+	    
+		return secondary_location_phrase;
+	}
+	
+	/*
 	 * Generate locations phrase
 	 */
 	
@@ -373,12 +390,62 @@ public class TweetFactory {
 		    return tweet;
 		}
 		
+		private SPhraseSpec generateDiversionTweet1(Map<String,Object>RDFdata){
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    
+		    //add bus phrase
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+
+		    tweet.setSubject(buses);
+		    
+		    VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase("divert");
+		    tweet.setVerbPhrase(verb_phrase);
+		    
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
+		   
+		    tweet.setFeature(Feature.TENSE, tense);
+
+		    PPPhraseSpec secondary_location_phrase = null;
+		    if(((String)RDFdata.get("primary-location")).length()>0){ //secondary location phrase goes at the end of message
+		    	tweet.addComplement(generateDiversionSecondaryLocationPhrase(RDFdata.get("primary-location").toString(),"into"));
+
+		    	if(generateDiversionSecondaryLocationPhrase(RDFdata.get("secondary-location").toString(),"at")!=null)
+			    	secondary_location_phrase = generateDiversionSecondaryLocationPhrase(RDFdata.get("secondary-location").toString(),"at");
+		    }
+		    
+		    	
+		    	
+		    //add the reason phrase - diversion,delay etc
+		    //tweet.setObject(RDFdata.get("event").toString());
+		    
+		    //add the location phrase
+
+		    //add the problem phrase
+		    if(generateProblemReasonPhrase(RDFdata.get("problem").toString())!=null)
+		    	 tweet.addComplement(generateProblemReasonPhrase(RDFdata.get("problem").toString()));		    
+		   
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+		    
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;
+		}
+		
+		
 		private SPhraseSpec shuffleOrder(Map<String,Object>RDFdata){
 			
 			Random r = new Random();
 			int i1 = r.nextInt(4);
-			
-			
+			/*if(primary_location and secondary_location)
+					if(roads)
+				is being divering along locatin and then into roads
+			if(primary_location and and roads secondary_location)
+				route(s)primary_location*/
 			return null;
 		}
 		
