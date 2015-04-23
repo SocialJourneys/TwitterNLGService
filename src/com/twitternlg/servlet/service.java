@@ -7,6 +7,7 @@ import com.twitternlg.nlg.TweetFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import simplenlg.phrasespec.NPPhraseSpec;
 
 
 /**
@@ -54,14 +57,21 @@ public class service extends HttpServlet {
 	    response.setContentType("application/json");
 	 // Get the printwriter object from response to write the required json object to the output stream      
 	 
-	/*    out.println(tweet.getEvent());
-	    out.println(tweet.getBus_services());
-	  */
-	    //tweet.print(out);
+/*	    out.println(tweet.getEvent());
+	    out.println(tweet.getDiversion_road());
+	  
+	    tweet.print(out);*/
     	TweetFactory t = new TweetFactory();
     	Map<String,Object> RDFdata = prepareInput(tweet);
-    	String message = t.generateTweetString(RDFdata);
-    	out.println(message);
+    	/*String message = t.generateTweetString(RDFdata);
+    	
+    	out.println(message);*/
+    	
+    	ArrayList <String>tweets = t.generateTweets(RDFdata);
+	    for(String objTweet: tweets){
+	    	out.println(objTweet);
+
+	    }	
 	}
 
 	//todo: remove this datatype conversion
@@ -72,7 +82,7 @@ public class service extends HttpServlet {
 		RDFdata.put("bus-services",tweet.getBus_services());
 		RDFdata.put("problem",tweet.getProblem());
 		RDFdata.put("primary-location",tweet.getLocation());
-		RDFdata.put("diversion-road",tweet.getDiversion_road());
+		RDFdata.put("diversion-roads",tweet.getDiversion_road());
 		RDFdata.put("duration",tweet.getDuration());
 		RDFdata.put("start-day",tweet.getStart_day());
 		RDFdata.put("start-time",tweet.getStart_time());

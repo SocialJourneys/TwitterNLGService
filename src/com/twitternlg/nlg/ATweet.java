@@ -32,7 +32,7 @@ public class ATweet {
 		out.println("bus_services: "+ bus_services);
 		out.println("problem: "+ problem);
 		out.println("location: "+ location);
-		out.println("diversion_road: "+ diversion_roads);
+		out.println("diversion_roads: "+ diversion_roads);
 		out.println("duration: "+ duration);
 		out.println("start_day: "+ start_day);
 		out.println("start_time: "+ start_time);
