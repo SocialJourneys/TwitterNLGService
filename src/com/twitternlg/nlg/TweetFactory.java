@@ -92,8 +92,20 @@ public class TweetFactory {
 		
 		switch(RDFdata.get("event").toString()){
     	case "diversion":
-    		tweets.add("<strong>template1<\\strong>\n" + realiser.realiseSentence(generateDiversionTweetTemplate1(RDFdata)));
-    		//tweets.add("template1\n" + generateDiversionTweetTemplate2(RDFdata));
+    		tweets.add("<route> is being diverted (into | along) <location> and then (right along | into) < road ><br>" + 
+    	realiser.realiseSentence(generateDiversionTweetTemplate1(RDFdata)));
+    		
+    		tweets.add("<route> <primary_location> diversion starts <timeInterval> until <date><br>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate2(RDFdata)));
+ 		   
+    		tweets.add("<route> diversion starts <timeInterval> for <timeInterval> only - <location><br>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate3(RDFdata)));
+    		
+    		tweets.add("<route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road ><br>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate4(RDFdata)));
+    		
+
+		
     		break;
     	case "delay":
     		//tweet = generateDelayTweet(RDFdata);
@@ -366,6 +378,24 @@ public class TweetFactory {
 		return primary_location_phrase;
 	}
 	
+	/*
+	 * Generate duration phrase
+	 */
+	
+	private PPPhraseSpec generateDurationPhrase(String duration_string, String preposition){
+		PPPhraseSpec duration_phrase = null;
+
+		if(duration_string.length()>0){
+			NPPhraseSpec duration = nlgFactory.createNounPhrase(duration_string);
+			duration_phrase = nlgFactory.createPrepositionPhrase();
+			duration_phrase.addComplement(duration);
+			//duration_phrase.addComplement("only");
+			duration_phrase.setPreposition(preposition); //todo
+	    }	    
+	    
+		return duration_phrase;
+	}
+	
 	private PPPhraseSpec generateDiversionRoadsPhrase(String diversion_roads_string, String preposition){
 		PPPhraseSpec diversion_roads_phrase = null;
 
@@ -444,8 +474,6 @@ public class TweetFactory {
 		
 		/*
   Template # 
-		   3		<route> diversion starts <timeInterval> for <timeInterval> only - <location>
-		   4		<route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road > 
 			
 			<route> <primary_location> diversion - 2nd - <Date>
 			<route> <primary_location> diversion from <time-interval>
@@ -510,23 +538,24 @@ public class TweetFactory {
 		    //add bus phrase
 		    String bus_services_string = (String)RDFdata.get("bus-services");
 		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
-		    tweet.setSubject(buses);
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"")!=null)
+		    	 buses.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),""));		    
+		   	
+		    //first part is "Service 12 diversion"
+		    SPhraseSpec first_part = nlgFactory.createClause();
+
+		    first_part.setSubject(buses);
+		    first_part.setObject("diversion");
 		    
-		    VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase("is");
-		    tweet.setVerbPhrase(verb_phrase);
-		    tweet.setObject("diversion");
-		    
+		    tweet.setSubject(first_part);
+
+		    VPPhraseSpec start_verb = nlgFactory.createVerbPhrase("start");
+		    tweet.setVerbPhrase(start_verb);
+
 		    Tense tense = (Tense)determineClauseTense(RDFdata);
 		   
 		    tweet.setFeature(Feature.TENSE, tense);
-		   
-		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"into")!=null)
-		    	 tweet.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"into"));		    
-		   		    
-		    if(generateDiversionRoadsPhrase(RDFdata.get("diversion-roads").toString(),"and then into")!=null)
-		    	 tweet.addComplement(generateDiversionRoadsPhrase(RDFdata.get("diversion-roads").toString(),"and then into"));		    
-
-		    
+		       
 		    /*PPPhraseSpec secondary_location_phrase = null;
 		    if(((String)RDFdata.get("primary-location")).length()>0){ //secondary location phrase goes at the end of message
 		    	tweet.addComplement(generateDiversionSecondaryLocationPhrase(RDFdata.get("primary-location").toString(),"into"));
@@ -535,7 +564,53 @@ public class TweetFactory {
 			    	secondary_location_phrase = generateDiversionSecondaryLocationPhrase(RDFdata.get("secondary-location").toString(),"at");
 		    }*/
 		    
-		    	
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+		 
+		    	  
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;
+		}
+
+			/*
+		   3		<route> diversion starts <timeInterval> for <timeInterval> only - <location>
+		 */
+		private SPhraseSpec generateDiversionTweetTemplate3(Map<String,Object>RDFdata){
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    
+		    //add bus phrase
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+		    //first part is "Service 12 diversion"
+		    SPhraseSpec first_part = nlgFactory.createClause();
+
+		    first_part.setSubject(buses);
+		    first_part.setObject("diversion");
+		    
+		    tweet.setSubject(first_part);
+
+		    VPPhraseSpec start_verb = nlgFactory.createVerbPhrase("start");
+		    tweet.setVerbPhrase(start_verb);
+
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
+		   
+		    tweet.setFeature(Feature.TENSE, tense);
+		    
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+		    
+		    if(generateDurationPhrase(RDFdata.get("duration").toString(),"for")!=null)
+		    	 tweet.addComplement(generateDurationPhrase(RDFdata.get("duration").toString(),"for"));		    
+		   	 
+		    
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"-")!=null)
+		    	 tweet.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"-"));		    
+		   	
 		    	  
 		    //String output = realiser.realiseSentence(tweet);
 		    //System.out.println(output);
@@ -543,6 +618,45 @@ public class TweetFactory {
 		    return tweet;
 		}
 		
+		/*
+		 <route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road >
+		 */
+		private SPhraseSpec generateDiversionTweetTemplate4(Map<String,Object>RDFdata){
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    
+		    //add bus phrase
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+		    //first part is "Service 12 diversion"
+		    SPhraseSpec first_part = nlgFactory.createClause();
+
+		    first_part.setSubject(buses);
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"from")!=null)
+		    	first_part.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"from"));		    
+		   	
+		    
+		    tweet.setSubject(first_part);
+		    VPPhraseSpec start_verb = nlgFactory.createVerbPhrase("is");
+		    tweet.setVerbPhrase(start_verb);
+		    
+		    tweet.setObject("diverted");
+		    
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
+		   
+		    tweet.setFeature(Feature.TENSE, tense);
+		    
+		    if(generateDiversionRoadsPhrase(RDFdata.get("diversion-roads").toString(),"along")!=null)
+		    	 tweet.addComplement(generateDiversionRoadsPhrase(RDFdata.get("diversion-roads").toString(),"along"));		    
+
+		    	  
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;
+		} 
+
+		   
 		private SPhraseSpec shuffleOrder(Map<String,Object>RDFdata){
 			
 			Random r = new Random();

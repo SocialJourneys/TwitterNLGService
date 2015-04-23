@@ -8,7 +8,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -69,6 +71,10 @@ public class service extends HttpServlet {
     	
     	ArrayList <String>tweets = t.generateTweets(RDFdata);
 	    for(String objTweet: tweets){
+		    /*List<String> tweet_template = new ArrayList<String>(Arrays.asList(objTweet.split("lbrk]")));
+	    	out.println(tweet_template.get(0));
+	    	out.println(tweet_template.get(1));*/
+	    	
 	    	out.println(objTweet);
 
 	    }	
