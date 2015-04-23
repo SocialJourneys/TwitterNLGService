@@ -92,17 +92,17 @@ public class TweetFactory {
 		
 		switch(RDFdata.get("event").toString()){
     	case "diversion":
-    		tweets.add("<route> is being diverted (into | along) <location> and then (right along | into) < road ><br>" + 
-    	realiser.realiseSentence(generateDiversionTweetTemplate1(RDFdata)));
+    		tweets.add("<strong>#T1:</strong> < route > is being diverted (into | along) < location > and then (right along | into) < road >	<br/>" + 
+    	"<strong>#M1:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate1(RDFdata))+"<br/><br/>");
     		
-    		tweets.add("<route> <primary_location> diversion starts <timeInterval> until <date><br>" + 
-    		    	realiser.realiseSentence(generateDiversionTweetTemplate2(RDFdata)));
+    		tweets.add("< route > <primary_location> diversion starts < timeInterval > until < date ><br/><strong>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate2(RDFdata))+"</strong><br>");
  		   
-    		tweets.add("<route> diversion starts <timeInterval> for <timeInterval> only - <location><br>" + 
-    		    	realiser.realiseSentence(generateDiversionTweetTemplate3(RDFdata)));
+    		tweets.add("< route > diversion starts < timeInterval > for < timeInterval > only - < location ><br/><strong>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate3(RDFdata))+"</strong><br>");
     		
-    		tweets.add("<route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road ><br>" + 
-    		    	realiser.realiseSentence(generateDiversionTweetTemplate4(RDFdata)));
+    		tweets.add("< route > <route> <route> from < primary_location > are being diverted along < road >,< road >,< road >,< road > and < road ><br/><strong>" + 
+    		    	realiser.realiseSentence(generateDiversionTweetTemplate4(RDFdata))+"</strong><br>");
     		
 
 		
