@@ -125,8 +125,10 @@ public class TweetFactory {
        		tweets.add("<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>" + 
     				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate4(RDFdata))+"<br/><br/>");
 
+       		tweets.add("<strong>T5:</strong>  date test<br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate5(RDFdata))+"<br/><br/>");
 
-
+       	
        		break;
     	case "accident":
     	//	tweet = generateDelayTweet(RDFdata);
@@ -345,37 +347,84 @@ public class TweetFactory {
 	/*
 	 * Determines past,present or future tense based on given date/time in the annotation
 	 */
-	private Object determineTodayTomorrowWeekend(Map<String,Object>RDFdata){
+	private Map<String,String> determineTodayTomorrowWeekend(Map<String,Object>RDFdata,String start_end_date){
 		Date current_date = new Date();
 		Date start_date = new Date();
-		Date end_date = new Date();
 		
-		ArrayList<Object> arr_start = createDateFormat(RDFdata,"start");
-		ArrayList<Object> arr_end = createDateFormat(RDFdata,"end");
+		ArrayList<Object> arr_start = createDateFormat(RDFdata,start_end_date);
+		
+		Map<String,String> results = new HashMap<String,String>();
 		
 		if(arr_start.size()>0)
 			start_date = (Date)arr_start.get(0);
-		if(arr_end.size()>0)
-			end_date = (Date)arr_end.get(0);
 
-		long start_diff = start_date.getTime()-current_date.getTime();
-		long end_diff = end_date.getTime()-current_date.getTime();
+		//check if today
+			//check if morning,evening,night
+		//check if tomorrow
+			//check if morning,evening,night
+		//check if weekend
+			//check if morning,evening,night
 		
-		if (start_diff>0){
-			//System.out.println("future");
-			return Tense.FUTURE;
-		}
-		else if (end_diff<0){
-			//System.out.println("past");
-			return Tense.PAST;
+		long seconds_difference = start_date.getTime()-current_date.getTime();
+		int days_difference = start_date.getDate()-current_date.getDate();
+		//days_difference = days_difference/(1000*60*60*24);
+		long minutes_difference = seconds_difference/(60*1000);
+		int hour = start_date.getHours();
+
+		String phrase = "";
+		
+		if(days_difference==1 || days_difference==0){
+			if(days_difference==1)
+				phrase = "tomorrow";
+			else if(days_difference==0)
+				phrase = "today";
+			
+			if(hour>=6&&hour<=11){
+				if(phrase=="today")
+					phrase = "this morning";
+				else
+					phrase = phrase + " "+"morning";
+			}
+			else if(hour>=12&&hour<=15){
+				if(phrase=="today")
+					phrase = "this afternoon";
+				else
+					phrase = phrase + " "+"afternoon";
+			}
+			else if(hour>=17&&hour<=19){
+				if(phrase=="today")
+					phrase = "this evening";
+				else
+					phrase = phrase + " "+"evening";
+			}
+			
+			else if(hour>=21){
+				if(phrase=="today")
+					phrase = "tonight";
+				else
+					phrase = phrase + " "+"night";
+			}
+
 		}
 		else{
-			//System.out.println("present");
-			return Tense.PRESENT;
+			if(days_difference>0 && days_difference<=8){
+				if(start_date.getDay()==6 || start_date.getDay()==0)
+					phrase = "this weekend";
+				else
+					phrase = createDateString(RDFdata,start_end_date);
+
+			}
+			else
+				phrase = createDateString(RDFdata,start_end_date);
 		}
-		
-		//if end date is past
-		//return Tense.PAST
+
+
+		results.put("minutes", String.valueOf(minutes_difference));
+		results.put("days", String.valueOf(days_difference));
+		results.put("hours", String.valueOf(hour));
+		results.put("phrase", phrase);
+
+		return results;
 	}
 
 	
@@ -1013,11 +1062,13 @@ public class TweetFactory {
 	    tweet.addComplement(duration_phrase);
 
 	    CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
-	    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
-	    buses_phrase.addComplement(buses);
-	    buses_phrase.setPreposition("to");    
-	    
-	    tweet.addComplement(buses_phrase);
+	    if(buses!=null){
+		    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
+		    buses_phrase.addComplement(buses);
+		    buses_phrase.setPreposition("to");    
+		    
+		    tweet.addComplement(buses_phrase);
+	    }
 	    //String output = realiser.realiseSentence(tweet);
 	    //System.out.println(output);
 	    
@@ -1049,20 +1100,45 @@ public class TweetFactory {
     tweet.addComplement(duration_phrase);
 
     CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
-    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
-    buses_phrase.addComplement(buses);
-    buses_phrase.setPreposition("on");    
-    
-    tweet.addComplement(buses_phrase);
-    
+    if(buses!=null){
+	    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
+	    buses_phrase.addComplement(buses);
+	    buses_phrase.setPreposition("on");    
+	    
+	    tweet.addComplement(buses_phrase);
+    }
     //add the date phrase
-    if(createDatePhrase(RDFdata)!=null)		    
-    	tweet.addComplement(createDatePhrase(RDFdata));
+    if(createDatePhrase(RDFdata)!=null){
+        Map<String,String> dates = determineTodayTomorrowWeekend(RDFdata,"start");
+        //tweet.setSubject(dates.get("hours"));
+        //tweet.addComplement(dates.get(1));
+        // tweet.setSubject("hours");
+         tweet.addComplement(dates.get("phrase"));
+    }
 
     
     //String output = realiser.realiseSentence(tweet);
     //System.out.println(output);
     
+    return tweet;			
+}
+	
+	/*
+test	 */	
+	private SPhraseSpec generateDelayTweetTemplate5(Map<String,Object>RDFdata){
+    /*
+     *create the first part
+     */
+	
+    SPhraseSpec tweet = nlgFactory.createClause();
+
+    Map<String,String> dates = determineTodayTomorrowWeekend(RDFdata,"start");
+    //tweet.setSubject(dates.get("hours"));
+    //tweet.addComplement(dates.get(1));
+     tweet.setSubject("Phrase: ");
+     tweet.setObject(dates.get("phrase"));
+    // tweet.setObject(dates.get("days"));
+
     return tweet;			
 }
 	
