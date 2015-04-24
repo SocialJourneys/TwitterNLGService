@@ -103,7 +103,12 @@ public class TweetFactory {
     		
     		tweets.add("<strong>T4:</strong> < route > <route> <route> from < primary_location > are being diverted along < road >,< road >,< road >,< road > and < road ><br/>" + 
     				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate4(RDFdata))+"<br><br/>");
-    		
+
+    		tweets.add("<strong>T5:</strong> due to an incident on < primary_location > < route > and < route > currently being diverted<br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate5(RDFdata))+"<br><br/>");
+
+    		tweets.add("<strong>T6:</strong> < route > < primary_location > diversion in place on < date > for < timeInterval ><br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate6(RDFdata))+"<br><br/>");
 
 		
     		break;
@@ -788,7 +793,85 @@ public class TweetFactory {
 		    return tweet;
 		} 
 
+		/*
+		due to an incident on <location> <route> and <route> currently being diverted
+		 */
+		private SPhraseSpec generateDiversionTweetTemplate5(Map<String,Object>RDFdata){
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    
+
+		    //first part is "Service 12 diversion"
+		    SPhraseSpec first_part = nlgFactory.createClause();
+
+		    first_part.setSubject("due to an incident");
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"on")!=null)
+		    	first_part.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"on"));		    
+		   	
+		    //add bus phrase
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+	    	first_part.addComplement(buses);		    
+
+		    tweet.setSubject(first_part);
+		    VPPhraseSpec start_verb = nlgFactory.createVerbPhrase("is");
+		    tweet.setVerbPhrase(start_verb);
+		    
+		    
+		    tweet.setObject("diverted");
+		    
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
 		   
+		    tweet.setFeature(Feature.TENSE, tense);
+	
+		    	  
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;
+		} 
+		
+		/*
+		<route><location> diversion in place on <date> for <timeInterval>
+		 */
+		private SPhraseSpec generateDiversionTweetTemplate6(Map<String,Object>RDFdata){
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    
+		    //add bus phrase
+		    String bus_services_string = (String)RDFdata.get("bus-services");
+		    CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+	
+		    //first part is "Service 12 diversion"
+		    SPhraseSpec first_part = nlgFactory.createClause();
+
+		    first_part.setSubject(buses);
+
+		    
+		    if(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),"")!=null)
+		    	first_part.addComplement(generatePrimaryLocationPhrase(RDFdata.get("primary-location").toString(),""));		    
+		    
+		    first_part.addComplement("diversion in place");
+
+		    tweet.setSubject(first_part);
+		    
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+
+		    //add the location info
+		    NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get("duration").toString());
+		    PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
+		    duration_phrase.addComplement(duration);
+		    duration_phrase.setPreposition("for");
+		    
+		    tweet.addComplement(duration_phrase);
+
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;
+		} 
 		private SPhraseSpec shuffleOrder(Map<String,Object>RDFdata){
 			
 			Random r = new Random();
