@@ -25,6 +25,9 @@ public class ATweet {
 	private String end_year;
 	private String service_status;
 	
+	private String bus_services_directions;
+	private String delay_size;
+
 	//private String diversion_secondary_locations;
 	
 	public void print(PrintWriter out){
@@ -45,6 +48,9 @@ public class ATweet {
 		out.println("end_month: "+ end_month);
 		out.println("end_year: "+ end_year);
 		out.println("service_status: "+ service_status);
+		out.println("bus_services_directions: "+ bus_services_directions);
+		out.println("delay_size: "+ delay_size);
+
 	}
 
 	public String getEvent(){
@@ -98,6 +104,14 @@ public class ATweet {
 	}
 	public String getService_status(){
 		return this.service_status;
+	}
+	
+	public String getBus_services_directions(){
+		return this.bus_services_directions;
+	}
+	
+	public String getDelay_size(){
+		return this.delay_size;
 	}
 }
 

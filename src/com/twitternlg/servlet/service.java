@@ -71,10 +71,6 @@ public class service extends HttpServlet {
     	
     	ArrayList <String>tweets = t.generateTweets(RDFdata);
 	    for(String objTweet: tweets){
-		    /*List<String> tweet_template = new ArrayList<String>(Arrays.asList(objTweet.split("lbrk]")));
-	    	out.println(tweet_template.get(0));
-	    	out.println(tweet_template.get(1));*/
-	    	
 	    	out.println(objTweet);
 
 	    }	
@@ -100,7 +96,10 @@ public class service extends HttpServlet {
 		RDFdata.put("end-date",tweet.getEnd_date());
 		RDFdata.put("end-month",tweet.getEnd_month());
 		RDFdata.put("end-year",tweet.getEnd_year());
-		RDFdata.put("service_status",tweet.getService_status());
+		RDFdata.put("service-status",tweet.getService_status());
+		
+		RDFdata.put("bus-services-directions",tweet.getBus_services_directions());
+		RDFdata.put("delay-size",tweet.getDelay_size());
 
 		return RDFdata;
 	}

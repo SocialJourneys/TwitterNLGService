@@ -71,7 +71,7 @@ public class TweetFactory {
 	    		tweet = generateDiversionTweetTemplate1(RDFdata);
 	    		break;
 	    	case "delay":
-	    		tweet = generateDelayTweet(RDFdata);
+	    		tweet = generateDelayTweetTemplate1(RDFdata);
 	    		break;
 	    	case "accident":
 	    	//	tweet = generateDelayTweet(RDFdata);
@@ -108,8 +108,21 @@ public class TweetFactory {
 		
     		break;
     	case "delay":
-    		//tweet = generateDelayTweet(RDFdata);
-    		break;
+       		tweets.add("<strong>T1:</strong> < route > [< direction>] [and < route >] experiencing [< delay-size >] delays (of|of approx|of approximately|of up to)) < number > mins < direction > [< time-interval >] [due to < reason >]<br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate1(RDFdata))+"<br/><br/>");
+       		
+       		tweets.add("<strong>T2:</strong> < route > [< direction >] running < number > mins late [< time-interval >]<br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate2(RDFdata))+"<br/><br/>");
+
+       		tweets.add("<strong>T3:</strong> < reason > causing delays of < number > mins to < route ><br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate3(RDFdata))+"<br/><br/>");
+
+       		tweets.add("<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>" + 
+    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate4(RDFdata))+"<br/><br/>");
+
+
+
+       		break;
     	case "accident":
     	//	tweet = generateDelayTweet(RDFdata);
     		break;
@@ -180,7 +193,8 @@ public class TweetFactory {
 	    return tweet;
 	}
 
-	private SPhraseSpec createDatePhrase(Map<String,Object>RDFdata){
+	
+	private SPhraseSpec createDateTimeIntervalPhrase(Map<String,Object>RDFdata){
 		Tense tense = (Tense)determineClauseTense(RDFdata);
 		
 		SPhraseSpec date_phrase = null;
@@ -227,11 +241,65 @@ public class TweetFactory {
 	
 			}
 		}
-
 		//date_phrase.setObject(tense.toString());
 		
 		return date_phrase;
 	}
+	
+		private SPhraseSpec createDatePhrase(Map<String,Object>RDFdata){
+			Tense tense = (Tense)determineClauseTense(RDFdata);
+			
+			SPhraseSpec date_phrase = null;
+
+			
+			String start_date = createDateString(RDFdata,"start");
+			String end_date = createDateString(RDFdata,"end");
+			
+			if(start_date.length()>0 || end_date.length()>0){
+				
+				date_phrase = nlgFactory.createClause();
+				
+				String full_date = start_date;
+				
+				if(start_date.length()>0 && end_date.length()>0)
+					full_date = full_date+" to "+end_date;
+				else if (start_date.length()<=0 && end_date.length()>0)
+					full_date = end_date;
+				
+				date_phrase.setObject(full_date);
+				
+				switch(tense){
+					case PAST:{
+						date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
+						break;
+					}
+					case PRESENT:{
+						if(end_date.length()>0)
+							date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
+						else if(start_date.length()>0)
+							date_phrase.setFeature(Feature.COMPLEMENTISER, "since");
+						break;
+					}
+					case FUTURE:{
+						if(start_date.length()>0)
+							date_phrase.setFeature(Feature.COMPLEMENTISER, "from");
+						else
+							date_phrase.setFeature(Feature.COMPLEMENTISER, "until");
+		
+						break;
+					}
+					default:
+					break;
+		
+				}
+			}
+
+			
+		//date_phrase.setObject(tense.toString());
+		
+		return date_phrase;
+	}
+	
 	
 	/*
 	 * Determines past,present or future tense based on given date/time in the annotation
@@ -268,6 +336,43 @@ public class TweetFactory {
 		//if end date is past
 		//return Tense.PAST
 	}
+	
+	/*
+	 * Determines past,present or future tense based on given date/time in the annotation
+	 */
+	private Object determineTodayTomorrowWeekend(Map<String,Object>RDFdata){
+		Date current_date = new Date();
+		Date start_date = new Date();
+		Date end_date = new Date();
+		
+		ArrayList<Object> arr_start = createDateFormat(RDFdata,"start");
+		ArrayList<Object> arr_end = createDateFormat(RDFdata,"end");
+		
+		if(arr_start.size()>0)
+			start_date = (Date)arr_start.get(0);
+		if(arr_end.size()>0)
+			end_date = (Date)arr_end.get(0);
+
+		long start_diff = start_date.getTime()-current_date.getTime();
+		long end_diff = end_date.getTime()-current_date.getTime();
+		
+		if (start_diff>0){
+			//System.out.println("future");
+			return Tense.FUTURE;
+		}
+		else if (end_diff<0){
+			//System.out.println("past");
+			return Tense.PAST;
+		}
+		else{
+			//System.out.println("present");
+			return Tense.PRESENT;
+		}
+		
+		//if end date is past
+		//return Tense.PAST
+	}
+
 	
 	private String createDateString(Map<String,Object>RDFdata, String start_end){
 		ArrayList<Object> arr = createDateFormat(RDFdata,start_end);
@@ -344,6 +449,33 @@ public class TweetFactory {
 		return buses;
 	}
 	
+	
+	private CoordinatedPhraseElement generateBusServicesWithDirections(Map<String,Object>RDFdata){
+		String buses_string = (String)RDFdata.get("bus-services");
+		CoordinatedPhraseElement  buses_with_directions = null;
+	  
+		if(buses_string.length()>0){
+	    	
+			String buses_directions_string = (String)RDFdata.get("bus-services-directions");
+		    List<String> buses_list = new ArrayList<String>(Arrays.asList(buses_string.split(",")));
+		    List<String> buses_directions_list = new ArrayList<String>();
+		    
+		    if(buses_directions_string.length()>0)
+		    	buses_directions_list = Arrays.asList(buses_directions_string.split(","));
+	
+		    buses_with_directions = nlgFactory.createCoordinatedPhrase();
+		    for(int i=0; i<buses_list.size(); i++){
+		    	String bus = buses_list.get(i);
+		    	if(buses_directions_list.size()>i)
+		    		bus=bus+" "+buses_directions_list.get(i);
+		    	
+		    	NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
+		    	buses_with_directions.addCoordinate(bus_obj);
+		    }
+
+	}
+		return buses_with_directions;
+	}
 	/*
 	 * Generate diversion secondary locations phrase
 	 */
@@ -669,59 +801,98 @@ public class TweetFactory {
 			return null;
 		}
 		
-		private SPhraseSpec generateDelayTweet(Map<String,Object>RDFdata){
+		/*
+		 * <route> [<direction>] [and <route>] experiencing [<delay-size>] delays (of|of approx|of approximately|of up to)) <number> mins <direction> [<time-interval>] [due to <reason>]
+		*/	
+		private SPhraseSpec generateDelayTweetTemplate1(Map<String,Object>RDFdata){
 		    /*
-		     * Assumption: Every tweet will have two parts - info about the bus and place, info about the problem and date
-		     *
 		     *create the first part
 		     */
 			
 		    SPhraseSpec tweet = nlgFactory.createClause();
-		    
-		    VPPhraseSpec problem = nlgFactory.createVerbPhrase(RDFdata.get("problem").toString());
-	     
-		    tweet.setSubject(problem);
-		    
-		    //add bus info
-		    ArrayList<String>bus_services = (ArrayList<String>)RDFdata.get("bus-services");
-		    //System.out.println(bus_services);
-		    CoordinatedPhraseElement buses = nlgFactory.createCoordinatedPhrase();
-		    for(String bus: bus_services){
-		    	NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
-		    	buses.addCoordinate(bus_obj);
-		    }
+		    CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
 
-		    //add the start end date info
-		    SPhraseSpec bus_phrase = nlgFactory.createClause();
-		    bus_phrase.setObject(buses);
-		    bus_phrase.setFeature(Feature.COMPLEMENTISER, "on");
-
+		    if(buses!=null)
+		    	tweet.setSubject(buses);
+		    tweet.setVerb("is");
 		    
-		    tweet.setObject(bus_phrase);
+		    tweet.setObject("experiencing delays");
+		    
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
+			   
+		    tweet.setFeature(Feature.TENSE, tense);
+		   
+		    
+		    //tweet.setSubject(RDFdata.get("bus-service").toString());
+		    
+		//  p.setVerb("effect"); //minimizing the characters by dropping out the verb
+		    
+		    //add the location info
+		    if((RDFdata.get("duration").toString()).length()>0){
+			    NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get("duration").toString());
+			    PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
+			    duration_phrase.addComplement(duration);
+			    duration_phrase.setPreposition("of upto");
+	
+			    tweet.addComplement(duration_phrase);
+			 }
+		    
+		    //add the problem phrase
+		    if(generateProblemReasonPhrase(RDFdata.get("problem").toString())!=null)
+		    	 tweet.addComplement(generateProblemReasonPhrase(RDFdata.get("problem").toString()));		    
+		   
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+		
+		    
+		    //String output = realiser.realiseSentence(tweet);
+		    //System.out.println(output);
+		    
+		    return tweet;			
+		}
+	
+		/*
+			<route> [<direction>] running <number> mins late [<time-interval>]
+		*/	
+		private SPhraseSpec generateDelayTweetTemplate2(Map<String,Object>RDFdata){
+		    /*
+		     *create the first part
+		     */
+			
+		    SPhraseSpec tweet = nlgFactory.createClause();
+		    CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
 
+		    if(buses!=null)
+		    	tweet.setSubject(buses);
+
+		    tweet.setVerb("is");
+		    tweet.setObject("running");
+		    
+		    Tense tense = (Tense)determineClauseTense(RDFdata);
+			   
+		    tweet.setFeature(Feature.TENSE, tense);
+		   
+		    
 		    //tweet.setSubject(RDFdata.get("bus-service").toString());
 		    
 		//  p.setVerb("effect"); //minimizing the characters by dropping out the verb
 		    
 		    //add the location info
 		    NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get("duration").toString());
-		    PPPhraseSpec pp = nlgFactory.createPrepositionPhrase();
-		    pp.addComplement(duration);
-		    pp.setPreposition("for");
-
-		    tweet.addComplement(pp);
-
-		    /*
-		     *
-		     *create the second part - problem and date
-		     */
+		    PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
+		    duration_phrase.addComplement(duration);
 		    
-		    //add the start end date info
-		    SPhraseSpec date = nlgFactory.createClause();
-		    date.setObject(RDFdata.get("time-of-day").toString());
-		    date.setFeature(Feature.COMPLEMENTISER, "this");
+		    tweet.addComplement(duration);
+		    
+		    NPPhraseSpec post_duration = nlgFactory.createNounPhrase("late");
 
-		    tweet.addComplement(date);
+		    tweet.addComplement(post_duration);
+
+		    //add the date phrase
+		    if(createDatePhrase(RDFdata)!=null)		    
+		    	tweet.addComplement(createDatePhrase(RDFdata));
+		
 		    
 		    //String output = realiser.realiseSentence(tweet);
 		    //System.out.println(output);
@@ -729,7 +900,89 @@ public class TweetFactory {
 		    return tweet;			
 		}
 		
+
+		/*
+		<reason> causing delays of <number> mins to <route>
+	*/	
+	private SPhraseSpec generateDelayTweetTemplate3(Map<String,Object>RDFdata){
+	    /*
+	     *create the first part
+	     */
 		
+	    SPhraseSpec tweet = nlgFactory.createClause();
+	    
+	    tweet.setSubject(RDFdata.get("problem").toString());
+	    tweet.setVerb("is");
+	    tweet.setObject("causing delays");
+	    
+	    Tense tense = (Tense)determineClauseTense(RDFdata);
+		   
+	    tweet.setFeature(Feature.TENSE, tense);
+	   
+	    
+	    
+	    //add the location info
+	    NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get("duration").toString());
+	    PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
+	    duration_phrase.addComplement(duration);
+	    duration_phrase.setPreposition("of");
+	    
+	    tweet.addComplement(duration_phrase);
+
+	    CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
+	    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
+	    buses_phrase.addComplement(buses);
+	    buses_phrase.setPreposition("to");    
+	    
+	    tweet.addComplement(buses_phrase);
+	    //String output = realiser.realiseSentence(tweet);
+	    //System.out.println(output);
+	    
+	    return tweet;			
+	}
+	
+	/*
+	delays (of | of up to) <number> mins (to | on) <route> [and [<number> mins on] <route>] <time-interval>
+	 */	
+	private SPhraseSpec generateDelayTweetTemplate4(Map<String,Object>RDFdata){
+    /*
+     *create the first part
+     */
+	
+    SPhraseSpec tweet = nlgFactory.createClause();
+    
+    tweet.setSubject("delays");
+    //tweet.setVerb("is");
+   // tweet.setObject("causing delays");
+
+    
+    
+    //add the location info
+    NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get("duration").toString());
+    PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
+    duration_phrase.addComplement(duration);
+    duration_phrase.setPreposition("of");
+    
+    tweet.addComplement(duration_phrase);
+
+    CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
+    PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
+    buses_phrase.addComplement(buses);
+    buses_phrase.setPreposition("on");    
+    
+    tweet.addComplement(buses_phrase);
+    
+    //add the date phrase
+    if(createDatePhrase(RDFdata)!=null)		    
+    	tweet.addComplement(createDatePhrase(RDFdata));
+
+    
+    //String output = realiser.realiseSentence(tweet);
+    //System.out.println(output);
+    
+    return tweet;			
+}
+	
 		//types of tweets: Disruption, Diversion, Delay, Accident, Traffic jam, general update.
 
 		/*
