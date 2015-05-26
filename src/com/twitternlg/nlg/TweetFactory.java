@@ -11,6 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.framework.CoordinatedPhraseElement;
@@ -87,62 +92,103 @@ public class TweetFactory {
 			
 		}
 
-	public ArrayList<String> generateTweets(Map<String,Object> RDFdata){
+	public ArrayList<String> generateTweets(Map<String, Object> RDFdata) {
 		ArrayList<String> tweets = new ArrayList<String>();
-		
-		switch(RDFdata.get("event").toString()){
-    	case "diversion":
-    		tweets.add("<strong>T1:</strong> < route > is being diverted (into | along) < location > and then (right along | into) < road >	<br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate1(RDFdata))+"<br/><br/>");
-    		
-    		tweets.add("<strong>T2:</strong> < route > <primary_location> diversion starts < timeInterval > until < date ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate2(RDFdata))+"<br><br/>");
- 		   
-    		tweets.add("<strong>T3:</strong> < route > diversion starts < timeInterval > for < timeInterval > only - < location ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate3(RDFdata))+"<br><br/>");
-    		
-    		tweets.add("<strong>T4:</strong> < route > <route> <route> from < primary_location > are being diverted along < road >,< road >,< road >,< road > and < road ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate4(RDFdata))+"<br><br/>");
 
-    		tweets.add("<strong>T5:</strong> due to an incident on < primary_location > < route > and < route > currently being diverted<br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate5(RDFdata))+"<br><br/>");
+		switch (RDFdata.get("event").toString()) {
+		case "diversion":
+			tweets.add(/*
+						 * "<strong>T1:</strong> < route > is being diverted (into | along) < location > and then (right along | into) < road >	<br/> <strong>Message:</strong> "
+						 * +
+						 */realiser
+					.realiseSentence(generateDiversionTweetTemplate1(RDFdata))
+			/* + "<br/><br/>" */);
 
-    		tweets.add("<strong>T6:</strong> < route > < primary_location > diversion in place on < date > for < timeInterval ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDiversionTweetTemplate6(RDFdata))+"<br><br/>");
+			tweets.add(/*
+						 * "<strong>T2:</strong> < route > <primary_location> diversion starts < timeInterval > until < date ><br/> <strong>Message:</strong> "
+						 * +
+						 */realiser
+					.realiseSentence(generateDiversionTweetTemplate2(RDFdata))
+			/* + "<br/><br/>" */);
 
-		
-    		break;
-    	case "delay":
-       		tweets.add("<strong>T1:</strong> < route > [< direction>] [and < route >] experiencing [< delay-size >] delays (of|of approx|of approximately|of up to)) < number > mins < direction > [< time-interval >] [due to < reason >]<br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate1(RDFdata))+"<br/><br/>");
-       		
-       		tweets.add("<strong>T2:</strong> < route > [< direction >] running < number > mins late [< time-interval >]<br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate2(RDFdata))+"<br/><br/>");
+			tweets.add(/*
+						 * "<strong>T3:</strong> < route > diversion starts < timeInterval > for < timeInterval > only - < location ><br/> <strong>Message:</strong> "
+						 * +
+						 */realiser
+					.realiseSentence(generateDiversionTweetTemplate3(RDFdata))
+			/* + "<br/><br/>" */);
 
-       		tweets.add("<strong>T3:</strong> < reason > causing delays of < number > mins to < route ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate3(RDFdata))+"<br/><br/>");
+			tweets.add(/*
+						 * "<strong>T4:</strong> < route > <route> <route> from < primary_location > are being diverted along < road >,< road >,< road >,< road > and < road ><br/> <strong>Message:</strong> "
+						 * +
+						 */realiser
+					.realiseSentence(generateDiversionTweetTemplate4(RDFdata))
+			/* + "<br/><br/>" */);
+			if (RDFdata.get("problem") != null)
+				tweets.add(/*
+							 * "<strong>T5:</strong> due to an incident on < primary_location > < route > and < route > currently being diverted<br/> <strong>Message:</strong> "
+							 * +
+							 */realiser
+						.realiseSentence(generateDiversionTweetTemplate5(RDFdata))
+				/* + "<br/><br/>" */);
 
-       		tweets.add("<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate4(RDFdata))+"<br/><br/>");
+			tweets.add(/*
+						 * "<strong>T6:</strong> < route > < primary_location > diversion in place on < date > for < timeInterval ><br/> <strong>Message:</strong> "
+						 * +
+						 */realiser
+					.realiseSentence(generateDiversionTweetTemplate6(RDFdata))
+			/* + "<br/><br/>" */);
+			break;
+		case "delay":
+			tweets.add(/*
+						 * "<strong>T1:</strong> < route > [< direction>] [and < route >] experiencing [< delay-size >] delays (of|of approx|of approximately|of up to)) < number > mins < direction > [< time-interval >] [due to < reason >]<br/>"
+						 * + "<strong>Message:</strong> "+
+						 */
+			realiser.realiseSentence(generateDelayTweetTemplate1(RDFdata))
+			/* + "<br/><br/>" */);
 
-       		tweets.add("<strong>T5:</strong>  date test<br/>" + 
-    				"<strong>Message:</strong> "+realiser.realiseSentence(generateDelayTweetTemplate5(RDFdata))+"<br/><br/>");
+			tweets.add(/*
+						 * "<strong>T2:</strong> < route > [< direction >] running < number > mins late [< time-interval >]<br/>"
+						 * + "<strong>Message:</strong> "+
+						 */
+			realiser.realiseSentence(generateDelayTweetTemplate2(RDFdata))
+			/* + "<br/><br/>" */);
 
-       	
-       		break;
-    	case "accident":
-    	//	tweet = generateDelayTweet(RDFdata);
-    		break;
-    	case "greeting":
-    	//	tweet = generateDelayTweet(RDFdata);
-    		break;
-    	default:
-    		break;
-	    }
-	    
-	    return tweets;
-		
+			tweets.add(/*
+						 * "<strong>T3:</strong> < reason > causing delays of < number > mins to < route ><br/>"
+						 * + "<strong>Message:</strong> "+
+						 */
+			realiser.realiseSentence(generateDelayTweetTemplate3(RDFdata))
+			/* + "<br/><br/>" */);
+			tweets.add(/*
+						 * "<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>"
+						 * + "<strong>Message:</strong> "+
+						 */
+			realiser.realiseSentence(generateDelayTweetTemplate4(RDFdata))
+			/* + "<br/><br/>" */);
+
+			tweets.add(/*
+						 * "<strong>T5:</strong>  date test<br/>" +
+						 * "<strong>Message:</strong> " +
+						 */
+			realiser.realiseSentence(generateDelayTweetTemplate5(RDFdata))
+			/* + "<br/><br/>" */);
+
+			break;
+		case "accident":
+			// tweet = generateDelayTweet(RDFdata);
+			break;
+		case "greeting":
+			// tweet = generateDelayTweet(RDFdata);
+			break;
+		default:
+			break;
+		}
+
+		return tweets;
+
 	}
+	
 	
 	private SPhraseSpec generateDiversionTweet2(Map<String,Object>RDFdata){
 		
@@ -1261,7 +1307,17 @@ test	 */
 			return RDFdata;
 		}
 		
+		
+		/*private void testXPath(){
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(<uri_as_string>);
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xpath = xPathfactory.newXPath();
+			XPathExpression expr = xpath.compile(<xpath_expression>);
+		}*/
 }
+
 
 /*
  * Sample tweets

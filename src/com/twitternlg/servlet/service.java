@@ -70,10 +70,11 @@ public class service extends HttpServlet {
     	out.println(message);*/
     	
     	ArrayList <String>tweets = t.generateTweets(RDFdata);
-	    for(String objTweet: tweets){
+    	out.println(tweets.get(0));
+/*	    for(String objTweet: tweets){
 	    	out.println(objTweet);
 
-	    }	
+	    }	*/
 	}
 
 	//todo: remove this datatype conversion
