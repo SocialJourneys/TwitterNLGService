@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<!-- 
+pre/post/none: placement of tag in the phrase
+if a tag is required yes, then the phrase will be only generated with tag.
+priority: determines whether we should drop the phrase to reduce word count in the tweet. high: never drops, low is the first to drop incase of reduction.
+ -->
+<templates>
+	<template id="0">
+<!-- 
+<service> is being diverted (into | along) <location> and then (right along | into) < place >
+ -->
+		<event>diversion</event>
+		<phrase priority="high">
+			<tag required="yes">service</tag>
+			<expression>pre</expression>
+			<complement type="verb">is</complement>
+			<complement type="object">diverted</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
+		</phrase>
+		<phrase priority="medium">
+			<expression>post</expression>
+			<complement>into|along</complement>
+			<tag required="yes">location</tag>
+		</phrase>
+		<phrase priority="low">
+			<expression>post</expression>
+			<complement>and then</complement>
+			<complement>right along|into</complement>
+			<tag required="yes">place</tag>
+		</phrase>
+		
+	</template>
+
+
+		<template id="1">
+	<!--
+	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
+	 -->
+		<event>delay</event>
+		<phrase>
+			<tag required="yes">service</tag>
+			<expression>pre</expression>
+			<complement type="tag" required="no">direction</complement>
+		</phrase>
+		<phrase>
+			<expression>none</expression>
+			<complement>experiencing</complement>
+			<complement>delays</complement>
+			<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
+		</phrase>
+		<phrase>
+			<expression>post</expression>
+			<complement>delays</complement>
+			<complement>of|of approx|of upto</complement>
+			<tag required="yes">delay-size</tag>
+		</phrase>
+		
+	</template>
+</templates>

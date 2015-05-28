@@ -6,12 +6,13 @@ package com.twitternlg.nlg;
 
 import java.io.PrintWriter;
 
+
 public class ATweet {
-	private String event;
-	private String bus_services;
-	private String problem;
-	private String location;
-	private String diversion_roads;
+	private String type;
+	private String service;
+	private String hasFactor;
+	private String primaryLocation;
+	private String place;
 	private String duration;
 	private String start_day;
 	private String start_time;
@@ -24,18 +25,20 @@ public class ATweet {
 	private String end_month;
 	private String end_year;
 	private String service_status;
+	private String startsAtDateTime;
+	private String endsAtDateTime;
 	
 	private String bus_services_directions;
-	private String delay_size;
+	private String delayLength;
 
 	//private String diversion_secondary_locations;
 	
 	public void print(PrintWriter out){
-		out.println("event: "+ event);
-		out.println("bus_services: "+ bus_services);
-		out.println("problem: "+ problem);
-		out.println("location: "+ location);
-		out.println("diversion_roads: "+ diversion_roads);
+		out.println("event: "+ type);
+		out.println("bus_services: "+ service);
+		out.println("problem: "+ hasFactor);
+		out.println("primaryLocation: "+ primaryLocation);
+		out.println("diversion_roads: "+ place);
 		out.println("duration: "+ duration);
 		out.println("start_day: "+ start_day);
 		out.println("start_time: "+ start_time);
@@ -49,24 +52,12 @@ public class ATweet {
 		out.println("end_year: "+ end_year);
 		out.println("service_status: "+ service_status);
 		out.println("bus_services_directions: "+ bus_services_directions);
-		out.println("delay_size: "+ delay_size);
+		out.println("delay_size: "+ delayLength);
 
 	}
 
-	public String getEvent(){
-		return this.event;
-	}
-	public String getBus_services(){
-		return this.bus_services;
-	}
-	public String getProblem(){
-		return this.problem;
-	}
-	public String getLocation(){
-		return this.location;
-	}
-	public String getDiversion_road(){
-		return this.diversion_roads;
+	public String getType(){
+		return this.type;
 	}
 	public String getDuration(){
 		return this.duration;
@@ -110,8 +101,32 @@ public class ATweet {
 		return this.bus_services_directions;
 	}
 	
-	public String getDelay_size(){
-		return this.delay_size;
+	public String getStartsAtDateTime() {
+		return startsAtDateTime;
+	}
+
+	public String getEndsAtDateTime() {
+		return endsAtDateTime;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public String getHasFactor() {
+		return hasFactor;
+	}
+
+	public String getPrimaryLocation() {
+		return primaryLocation;
+	}
+
+	public String getPlace() {
+		return place;
+	}
+
+	public String getDelayLength() {
+		return delayLength;
 	}
 }
 
