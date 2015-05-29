@@ -20,10 +20,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.framework.CoordinatedPhraseElement;
+import simplenlg.framework.NLGElement;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
@@ -43,6 +47,15 @@ import static com.twitternlg.nlg.Constants.KEY_DELAY_LENGTH;
 import static com.twitternlg.nlg.Constants.KEY_DIVERTED_ROADS_PLACES;
 import static com.twitternlg.nlg.Constants.KEYWORD_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEYWORD_DELAY;
+import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DIVERSION_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DELAY_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_PROBLEM_REASON_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_BUS_SERVICES_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_PRIMARY_LOCATION_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_START_TIME_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_END_TIME_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_DIVERTED_ROADS_PLACES_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_DELAY_LENGTH_TAG;
 
 
 public class TweetFactory {
@@ -805,19 +818,19 @@ public class TweetFactory {
 			tweet.addComplement(generateDiversionRoadsPhrase(
 					RDFdata.get("place").toString(), "around"));
 
-		/*
-		 * PPPhraseSpec secondary_location_phrase = null;
-		 * if(((String)RDFdata.get("place")).length()>0){ //secondary
-		 * location phrase goes at the end of message
-		 * tweet.addComplement(generateDiversionSecondaryLocationPhrase
-		 * (RDFdata.get("place").toString(),"into"));
-		 * 
-		 * if(generateDiversionSecondaryLocationPhrase(RDFdata.get(
-		 * "secondary-location").toString(),"at")!=null)
-		 * secondary_location_phrase =
-		 * generateDiversionSecondaryLocationPhrase(RDFdata
-		 * .get("secondary-location").toString(),"at"); }
-		 */
+		
+		 PPPhraseSpec secondary_location_phrase = null;
+		  if(((String)RDFdata.get("place")).length()>0){ //secondary
+		  //location phrase goes at the end of message
+		  tweet.addComplement(generateDiversionSecondaryLocationPhrase
+		  (RDFdata.get("place").toString(),"into"));
+		  
+		  if(generateDiversionSecondaryLocationPhrase(RDFdata.get(
+		  "secondary-location").toString(),"at")!=null)
+		  secondary_location_phrase =
+		  generateDiversionSecondaryLocationPhrase(RDFdata
+		  .get("secondary-location").toString(),"at"); }
+		 
 
 		// String output = realiser.realiseSentence(tweet);
 		// System.out.println(output);
@@ -1431,31 +1444,161 @@ public class TweetFactory {
 		return RDFdata;
 	}
 
-	public String testXPath(ServletContext context){
+	public String testXPath(ServletContext context, Map<String,Object>RDFData){
 		String output = "";
+
 		try{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		
-		//ServletContext context = getServletContext();
 		String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
 		
 		Document doc = builder.parse(fullPath);
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		
-		XPathExpression expr = xpath.compile("/templates/template[@id='0']/event/text()");
+		//XPathExpression expr = xpath.compile("/templates/template[@id='0']/phrase/tag/text()");
 		
-		output = (String)expr.evaluate(doc, XPathConstants.STRING);
+		//output = (String)expr.evaluate(doc, XPathConstants.STRING);
 		
-		//output = fullPath;
-		}
+		XPathExpression expr_event = xpath.compile("/templates/template[@event='diversion']");
+		NodeList templates = (NodeList) xpath.evaluate("/templates/template[@event='diversion']",doc, XPathConstants.NODESET);
+
+		//output = "nodes: "+ templates.getLength();
+		
+		int phraseCount = 0;
+		ArrayList<String> outputArray = new ArrayList<String>();
+		//phrases loop
+		for(int i = 0; i < templates.getLength(); i++){
+			
+			SPhraseSpec tweet = nlgFactory.createClause();
+
+			Node template = templates.item(i);
+			  NodeList phrases = (NodeList) xpath.evaluate("phrase", template, XPathConstants.NODESET);
+
+			  //iterate all the phrases
+			  for(int j = 0; j < phrases.getLength(); j++){
+				  
+				  //get one phrase
+				  Node phrase = phrases.item(j);
+				  
+				  //get the tags in this one phrase
+				  NodeList tags = (NodeList)xpath.evaluate("tag", phrase, XPathConstants.NODESET);
+				  NodeList complements = (NodeList)xpath.evaluate("complement", phrase, XPathConstants.NODESET);
+
+			      String tagRequired = "yes";
+				  for(int k = 0; k < tags.getLength(); k++){
+					  Element tag = (Element) tags.item(k);
+				      String tagValue = xpath.evaluate("tag", phrase);
+				      tagRequired = tag.getAttribute("required");
+				      
+				      NLGElement element = managePhraseTag(tagValue,RDFData);
+				      if(tag.getAttribute("type")=="primary")
+				    	  tweet.setSubject(element);
+				      else
+				    	  tweet.addComplement(element);
+				      
+				  }
+				  
+				  //iterate the complements only if the tag is required
+				  if(tagRequired=="yes")
+					  for(int l = 0; l < complements.getLength(); l++){
+						  Element complement = (Element) complements.item(l);
+					      String complementValue = xpath.evaluate("complement", phrase);
+					      String RDFComplementValue = RDFData.get(complementValue).toString();
+						  String complementType = complement.getAttribute("type");
+						  //if complement is a tag
+						  switch (complementType){
+						  	  case "verb":
+						  		VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase(RDFComplementValue);
+								tweet.setVerbPhrase(verb_phrase);
+								break;
+						  	  case "object":
+						  		tweet.setObject(RDFComplementValue);
+						  		  break;
+							  case "tag": //special case for handling buses with directions
+								  break;
+							  default:
+								  
+								  break;
+						  }
+					  }
+
+			  }//phrases loop
+
+			}//templates loop
+		
+		}//try
 		catch(Exception e){
 			return e.getMessage();
 		}
 		
 		return output;
 	}
+	
+	private NLGElement managePhraseTag(String tag, Map<String,Object>RDFData){
+		NLGElement element = null;
+		switch (tag){
+		case KEY_BUS_SERVICES:
+			String bus_services_string = (String) RDFData.get("service");
+			CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+			element = buses;
+			break;
+		}
+		return element;
+		
+	}
+	
+	private SPhraseSpec generateDiversionTweetTemplate1aa(
+			Map<String, Object> RDFdata) {
+
+		SPhraseSpec tweet = nlgFactory.createClause();
+
+		// add bus phrase
+		String bus_services_string = (String) RDFdata.get("service");
+		CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+
+		tweet.setSubject(buses);
+
+		VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase("is");
+		tweet.setVerbPhrase(verb_phrase);
+		tweet.setObject("diverted");
+
+		Tense tense = (Tense) determineClauseTense(RDFdata);
+
+		tweet.setFeature(Feature.TENSE, tense);
+
+		if (RDFdata.containsKey("primaryLocation") && generatePrimaryLocationPhrase(RDFdata.get("primaryLocation")
+				.toString(), " around") != null)
+			tweet.addComplement(generatePrimaryLocationPhrase(
+					RDFdata.get("primaryLocation").toString(), "at"));
+
+		if (RDFdata.containsKey("place")
+				&& generateDiversionRoadsPhrase(RDFdata.get("place")
+						.toString(), "around ") != null)
+			tweet.addComplement(generateDiversionRoadsPhrase(
+					RDFdata.get("place").toString(), "around"));
+
+		/*
+		 * PPPhraseSpec secondary_location_phrase = null;
+		 * if(((String)RDFdata.get("place")).length()>0){ //secondary
+		 * location phrase goes at the end of message
+		 * tweet.addComplement(generateDiversionSecondaryLocationPhrase
+		 * (RDFdata.get("place").toString(),"into"));
+		 * 
+		 * if(generateDiversionSecondaryLocationPhrase(RDFdata.get(
+		 * "secondary-location").toString(),"at")!=null)
+		 * secondary_location_phrase =
+		 * generateDiversionSecondaryLocationPhrase(RDFdata
+		 * .get("secondary-location").toString(),"at"); }
+		 */
+
+		// String output = realiser.realiseSentence(tweet);
+		// System.out.println(output);
+
+		return tweet;
+	}
+	
 }
 
 /*

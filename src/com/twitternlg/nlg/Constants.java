@@ -29,4 +29,16 @@ public final class Constants {
     public static final String KEYWORD_DELAY = "delay";
 
     public static final String TEMPLATES_XML_FILENAME = "templates.xml";
+    
+    public static final String TEMPLATE_EVENT_TYPE_TAG = "event";
+    public static final String TEMPLATE_EVENT_DIVERSION_TAG = "diversion";
+    public static final String TEMPLATE_EVENT_DELAY_TAG = "delay";
+    public static final String TEMPLATE_PROBLEM_REASON_TAG = "problem";
+    public static final String TEMPLATE_BUS_SERVICES_TAG = "busServices";
+    public static final String TEMPLATE_PRIMARY_LOCATION_TAG = "primaryLocation";
+    public static final String TEMPLATE_START_TIME_TAG = "startsAtTime";
+    public static final String TEMPLATE_END_TIME_TAG = "endsAtTime";
+    public static final String TEMPLATE_DIVERTED_ROADS_PLACES_TAG = "divertedRoads";
+    public static final String TEMPLATE_DELAY_LENGTH_TAG = "delayLength";
+
 }
