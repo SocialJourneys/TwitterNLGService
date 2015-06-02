@@ -14,7 +14,8 @@ public final class Constants {
     public static final String KEY_EVENT_TYPE = "type";
     public static final String KEY_EVENT_DIVERSION = "PublicTransportDiversion";
     public static final String KEY_EVENT_DELAY = "PublicTransportDelay";
-    
+    public static final String KEY_EVENT_UPCOMING = "upcoming";
+
     public static final String KEY_PROBLEM_REASON = "hasFactor";
     public static final String KEY_BUS_SERVICES = "service";
     public static final String KEY_BUS_SERVICES_DIRECTIONS = "bus-services-directions";
@@ -23,6 +24,10 @@ public final class Constants {
     public static final String KEY_END_TIME = "endsAtTime";
     public static final String KEY_DIVERTED_ROADS_PLACES = "place";
     public static final String KEY_DELAY_LENGTH = "delayLength";
+
+    public static final String KEY_GREETING = "greeting";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_DURATION = "duration";
 
     public static final String KEYWORD_START_TIME = "start";
     public static final String KEYWORD_END_TIME = "end";

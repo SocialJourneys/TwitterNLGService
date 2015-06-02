@@ -11,7 +11,7 @@ priority: determines whether we should drop the phrase to reduce word count in t
 <service> is being diverted (into | along) <location> and then (right along | into) < place >
  -->
 		<phrase priority="high" type="primary">
-			<tag required="yes">service</tag>
+			<tag required="yes" type="subject">service</tag>
 			<complement type="verb">is</complement>
 			<complement type="object">diverted</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
 		</phrase>
@@ -28,12 +28,12 @@ priority: determines whether we should drop the phrase to reduce word count in t
 	</template>
 
 
-		<template id="1" type="delay1">
+		<template id="1" type="delay">
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
 		<phrase priority="high" type="primary">
-			<tag required="yes">service-direction</tag>
+			<tag required="yes" type="subject">service-direction</tag>
 			<complement type="verb">is</complement>
 		</phrase>
 		<phrase>
@@ -52,7 +52,30 @@ priority: determines whether we should drop the phrase to reduce word count in t
 		</phrase>
 	</template>
 
-		<templatex id="2" type="diversion">
+		<template id="2" type="upcoming">
+	<!--
+	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
+	 -->
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<tag required="yes">none</tag>
+			<complement type="none">your bus</complement>
+			<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
+		</phrase>
+		<phrase type="secondary">
+			<tag required="yes">service</tag>
+			<complement type="verb">is</complement>
+			<complement type="object">arriving</complement>
+		</phrase>
+		<phrase>
+			<complement type="preposition">in</complement>
+			<tag required="yes">duration</tag>
+		</phrase>
+	</template>
+
+		<templatex id="3" type="diversion1">
 	<!--
 	  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
 	  mins on] <route>] <time-interval>	
@@ -73,7 +96,7 @@ priority: determines whether we should drop the phrase to reduce word count in t
 		</phrase>
 	</templatex>
 
-			<templatex id="3" type="diversion">
+			<templatex id="4" type="diversion1">
 	<!--
 	 <service> from <primary_location> is/are being diverted along
 	  < road >,< road >,< road >,< road > and < road >

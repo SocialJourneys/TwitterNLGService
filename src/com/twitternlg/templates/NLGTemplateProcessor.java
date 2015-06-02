@@ -14,6 +14,7 @@ import java.util.Random;
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -39,6 +40,7 @@ import simplenlg.realiser.english.Realiser;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_TYPE;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DELAY;
+import static com.twitternlg.nlg.Constants.KEY_EVENT_UPCOMING;
 import static com.twitternlg.nlg.Constants.KEY_PROBLEM_REASON;
 import static com.twitternlg.nlg.Constants.KEY_BUS_SERVICES;
 import static com.twitternlg.nlg.Constants.KEY_BUS_SERVICES_DIRECTIONS;
@@ -46,6 +48,7 @@ import static com.twitternlg.nlg.Constants.KEY_PRIMARY_LOCATION;
 import static com.twitternlg.nlg.Constants.KEY_START_TIME;
 import static com.twitternlg.nlg.Constants.KEY_END_TIME;
 import static com.twitternlg.nlg.Constants.KEY_DELAY_LENGTH;
+import static com.twitternlg.nlg.Constants.KEY_DURATION;
 import static com.twitternlg.nlg.Constants.KEY_DIVERTED_ROADS_PLACES;
 import static com.twitternlg.nlg.Constants.KEYWORD_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEYWORD_DELAY;
@@ -148,10 +151,16 @@ public class NLGTemplateProcessor {
 			/* + "<br/><br/>" */);
 
 			break;
-		case "accident":
-			// tweet = generateDelayTweet(RDFdata);
+		case KEY_EVENT_UPCOMING:
+			tweets.add(/*
+						 * "<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>"
+						 * + "<strong>Message:</strong> "+
+						 */
+					realiser.realiseSentence(testXPath(context,RDFdata))
+			/* + "<br/><br/>" */);
+
 			break;
-		case "greeting":
+		case "accident":
 			// tweet = generateDelayTweet(RDFdata);
 			break;
 		default:
@@ -1368,41 +1377,6 @@ public class NLGTemplateProcessor {
 		tweet=phrase1;
 		tweet.addComplement(phrase2);
 		tweet.addComplement(phrase3);
-		//tweet.setSubject("delays");
-		// tweet.setVerb("is");
-		// tweet.setObject("causing delays");
-
-		// add the location info
-		/*if (RDFdata.containsKey("delayLength")){
-		NPPhraseSpec duration = nlgFactory.createNounPhrase(RDFdata.get(
-				"delayLength").toString());
-		PPPhraseSpec duration_phrase = nlgFactory.createPrepositionPhrase();
-		duration_phrase.addComplement(duration);
-		duration_phrase.setPreposition("of");
-
-		tweet.addComplement(duration_phrase);
-		}
-		
-		CoordinatedPhraseElement buses = generateBusServicesWithDirections(RDFdata);
-		if (buses != null) {
-			PPPhraseSpec buses_phrase = nlgFactory.createPrepositionPhrase();
-			buses_phrase.addComplement(buses);
-			buses_phrase.setPreposition("on");
-
-			tweet.addComplement(buses_phrase);
-		}
-		// add the date phrase
-		if (createDatePhrase(RDFdata) != null) {
-			Map<String, String> dates = determineTodayTomorrowWeekend(RDFdata,
-					"start");
-			// tweet.setSubject(dates.get("hours"));
-			// tweet.addComplement(dates.get(1));
-			// tweet.setSubject("hours");
-			tweet.addComplement(dates.get("phrase"));
-		}*/
-
-		// String output = realiser.realiseSentence(tweet);
-		// System.out.println(output);
 
 		return tweet;
 	}
@@ -1428,154 +1402,49 @@ public class NLGTemplateProcessor {
 		return tweet;
 	}
 
-	// types of tweets: Disruption, Diversion, Delay, Accident, Traffic jam,
-	// general update.
+	private Document loadXML(ServletContext context){
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+		String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
+		Document doc = null;
+		try {
+			builder = factory.newDocumentBuilder();
+			doc = builder.parse(fullPath);
 
-	/*
-	 * Generate dummy RDF with tags/annotation
-	 * 
-	 * Tweets: 1) Tillydrone Av diversion on Service 19 has been extended until
-	 * the 5th of April due to roadworks in preparation for the third Don
-	 * crossing. 2) Due to an incident on Bremner Terrace, #Service11 and
-	 * #Service12 are currently being diverted. 3) Delays of 5 mins to
-	 * #Service11 and #Service1 this morning. All other services running as
-	 * normal. 4) Very poor road conditions this morning and we expect delays as
-	 * traffic builds up towards 8am. All services are running. 5) Due to an
-	 * incident, Union St is closed between Market St and Bridge St. All buses
-	 * are being diverted along Schoolhill and Union Terrace.
-	 */
-
-	private Map<String, Object> createRDFData() {
-
-		// main RDFData variable
-		Map<String, Object> RDFdata = new HashMap<String, Object>();
-
-		// create a greeting tweet data
-		Map<String, Object> greeting_data = new HashMap<String, Object>();
-		greeting_data.put(KEY_EVENT_TYPE, " ");
-		greeting_data.put("time-of-day", "Good morning");
-		// greeting_data.put("time-of-day", "Good afternoon");
-		greeting_data.put("location", "Aberdeen");
-
-		RDFdata.put("greeting_tweet", greeting_data);
-
-		/*
-		 * create a diversion tweet data mentioning a place, end date and
-		 * effected bus service
-		 */
-		Map<String, Object> diversion_data = new HashMap<String, Object>();
-		diversion_data.put(KEY_EVENT_TYPE, "diversion");
-		diversion_data.put("place", "Tillydrone Av");
-
-		ArrayList<String> bus_services = new ArrayList<String>();
-		bus_services.add("Service 19");
-		// bus_services.add("Service 18");
-		// bus_services.add("Service 17");
-
-		diversion_data.put("service", bus_services);
-
-		diversion_data.put("problem", "diversion");
-		diversion_data.put("reason", "roadworks");
-		diversion_data.put("reason-compliment",
-				"preparation for the third Don crossing");
-		// RDFdata.put("start-date", ""); //we don't have start date in the
-		// source tweet
-		diversion_data.put("end-date", "5th April");
-
-		RDFdata.put("diversion_tweet", diversion_data);
-
-		/*
-		 * create a 2nd diversion tweet data with multiple buses, locations and
-		 * start, end time
-		 * 
-		 * Samples: 1)Due to an incident, Union St is closed between Market St
-		 * and Bridge St. All buses are being diverted along Schoolhill and
-		 * Union Terrace. 2)Service12 is being diverted into Byron Avenue and
-		 * then right along Provost Fraser Drive. 3)Services 1/2 / X40 from BOD
-		 * are being diverted along East North St, Commerce St, Virginia St,
-		 * Guild St and Bridge St.
-		 */
-		Map<String, Object> diversion_data_1 = new HashMap<String, Object>();
-		diversion_data_1.put(KEY_EVENT_TYPE, "diversion");
-		diversion_data_1.put("place", "Tillydrone Av");
-		// diversion_data_1.put("secondary-location", "Tillydrone Av");
-
-		bus_services = new ArrayList<String>();
-		bus_services.add("Service 1");
-		bus_services.add("Service 2");
-		// bus_services.add("Service 17");
-
-		diversion_data_1.put("service", bus_services);
-
-		diversion_data_1.put("problem", "diversion");
-		diversion_data_1.put("reason", "roadworks");
-		diversion_data_1.put("reason-compliment",
-				"preparation for the third Don crossing");
-
-		diversion_data_1.put("start-day", "sunday");
-		// diversion_data_1.put("start-time","00:00");
-		diversion_data_1.put("start-date", "5");
-		diversion_data_1.put("start-month", "April");
-		diversion_data_1.put("start-year", "2015");
-
-		diversion_data_1.put("end-time", "18:30");
-		diversion_data_1.put("end-date", "25");
-		diversion_data_1.put("end-month", "April");
-		diversion_data_1.put("end-year", "2015");
-
-		RDFdata.put("diversion_tweet_1", diversion_data_1);
-
-		/*
-		 * create a delay tweet data
-		 * 
-		 * Samples: 1)There are delays on Service 11 due to a bus stuck at
-		 * Kingswells roundabout to Cults. 2)Delays of upto 40 minutes on
-		 * service 11 due to a fault with the traffic lights on Springfield
-		 * Road. 3)Service 3 experiencing delays due to icy conditions in the
-		 * Foresterhill area.
-		 */
-
-		Map<String, Object> delay_data = new HashMap<String, Object>();
-
-		delay_data.put(KEY_EVENT_TYPE, "delay"); // delay event has time in minutes, a
-											// reason, one or more bus services,
-											// time of the day (morning,
-											// evening, afternoon)
-
-		bus_services = new ArrayList<String>();
-		bus_services.add("Service 11");
-		// bus_services.add("Service 1");
-		// bus_services.add("Service 2");
-
-		delay_data.put("service", bus_services);
-		delay_data.put("problem", "delay");
-		delay_data.put("time-of-day", "morning");
-		delay_data.put("delayLength", "15 mins");
-
-		RDFdata.put("delay_tweet", delay_data);
-
-		return RDFdata;
+		} 
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return doc;
 	}
-
+	
 	public SPhraseSpec testXPath(ServletContext context, Map<String,Object>RDFData){
 		SPhraseSpec tweet = nlgFactory.createClause();;
-
-		try{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		
-		String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
-		
-		Document doc = builder.parse(fullPath);
+		Document doc = loadXML(context);
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
+		
+		String templateType = RDFData.get(KEY_EVENT_TYPE).toString();
+		switch (templateType){
+		case KEY_EVENT_DELAY:
+			templateType = TEMPLATE_EVENT_DELAY_TAG;
+			break;
+		case KEY_EVENT_DIVERSION:
+			templateType = TEMPLATE_EVENT_DIVERSION_TAG;
+			break;
+		case KEY_EVENT_UPCOMING:
+			templateType = KEY_EVENT_UPCOMING;
+			break;
+		}
+		try{
 		
 		//XPathExpression expr = xpath.compile("/templates/template[@id='0']/phrase/tag/text()");
 		
 		//output = (String)expr.evaluate(doc, XPathConstants.STRING);
 		
 //		XPathExpression expr_event = xpath.compile("/templates/template[@type='diversion']");
-		NodeList templates = (NodeList) xpath.evaluate("/templates/template[@type='delay1']",doc, XPathConstants.NODESET);
+		NodeList templates = (NodeList) xpath.evaluate("/templates/template[@type='"+templateType+"']",doc, XPathConstants.NODESET);
 
 		//output = "nodes: "+ templates.getLength();
 		
@@ -1607,17 +1476,20 @@ public class NLGTemplateProcessor {
 		    	  
 			      String tagRequired = "";
 			      String tagValue="";
+			      String tagType="";
 				  for(int k = 0; k < tags.getLength(); k++){ //right now, there is only one tag in each phrase
 					  Element tag = (Element) tags.item(k);
 				      tagValue = xpath.evaluate("tag", phrase);
 				      tagRequired = tag.getAttribute("required");
+				      //tagType = tag.getAttribute("type");
 	
 				  }
 		    	  //System.out.println("phraseType: " + phraseType);
 
-			      if(phraseType.equals("primary")){
+			      if(phraseType.equals("primary") || phraseType.equals("secondary")){
 			    	  part_phrase_sp = nlgFactory.createClause();
 			    	  part_phrase_sp.setSubject(extractPhraseTagSP(tagValue,RDFData));
+				      //System.out.println("phraseType: " + part_phrase_sp.getSubject().toString());
 			      }
 			      else{
 			    	  //part_phrase_pp = nlgFactory.createPrepositionPhrase();
@@ -1625,9 +1497,10 @@ public class NLGTemplateProcessor {
 			      }
 			      //System.out.println("phraseType: " + part_phrase_sp.getSubject().toString());
 
-				  System.out.println("complements : " + complements.getLength());
+				 // System.out.println("complements : " + complements.getLength());
 				//System.out.println("tagValue: " + tagValue);
 				  String preposition_string="";
+				  
 				  //iterate the complements only if the tag is required
 				  if(tagRequired.equals("yes"))
 				  //if(part_phrase_sp!=null || part_phrase_pp!=null)
@@ -1672,8 +1545,10 @@ public class NLGTemplateProcessor {
 				  if(preposition_string.length()>0)
 					  part_phrase_pp.setPreposition(preposition_string);
 				  
-			      if(phraseType.equals("primary"))
+			      if(phraseType.equals("primary")){
 			    	  tweet=part_phrase_sp;
+			    	  //System.out.println(part_phrase_sp.toString());
+			      }
 			      else{
 			    	  if(part_phrase_sp!=null)
 			    		  tweet.addComplement(part_phrase_sp);
@@ -1725,6 +1600,12 @@ public class NLGTemplateProcessor {
 	private PPPhraseSpec extractPhraseTagPP(String tag, Map<String,Object>RDFData){
 		PPPhraseSpec element = null;
 		switch (tag){
+		case KEY_BUS_SERVICES:
+			String bus_services_string = RDFData.get(KEY_BUS_SERVICES).toString();
+			CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
+			element = nlgFactory.createPrepositionPhrase(buses);
+			break;
+
 		case KEY_DIVERTED_ROADS_PLACES:
 			String diverted_roads = (String) RDFData.get(KEY_DIVERTED_ROADS_PLACES);
 			PPPhraseSpec diverted_roads_phrase = generateDiversionRoadsPhraseOnly(diverted_roads);
@@ -1748,62 +1629,17 @@ public class NLGTemplateProcessor {
 			PPPhraseSpec delay_length_phrase = generateProblemReasonPhrase(delay_length);
 			element = delay_length_phrase;
 			break;
+		case KEY_DURATION:	
+			String duration = (String) RDFData.get(KEY_DURATION);
+			PPPhraseSpec duration_phrase = generateProblemReasonPhrase(duration);
+			element = duration_phrase;
+			break;
 		case "none":	
 			element = nlgFactory.createPrepositionPhrase();
 			break;
 		}
 		return element;
 		
-	}
-	
-	private SPhraseSpec generateDiversionTweetTemplate1aa(
-			Map<String, Object> RDFdata) {
-
-		SPhraseSpec tweet = nlgFactory.createClause();
-
-		// add bus phrase
-		String bus_services_string = (String) RDFdata.get("service");
-		CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
-
-		tweet.setSubject(buses);
-
-		VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase("is");
-		tweet.setVerbPhrase(verb_phrase);
-		tweet.setObject("diverted");
-
-		Tense tense = (Tense) determineClauseTense(RDFdata);
-
-		tweet.setFeature(Feature.TENSE, tense);
-
-		if (RDFdata.containsKey("primaryLocation") && generatePrimaryLocationPhrase(RDFdata.get("primaryLocation")
-				.toString(), " around") != null)
-			tweet.addComplement(generatePrimaryLocationPhrase(
-					RDFdata.get("primaryLocation").toString(), "at"));
-
-		if (RDFdata.containsKey("place")
-				&& generateDiversionRoadsPhrase(RDFdata.get("place")
-						.toString(), "around ") != null)
-			tweet.addComplement(generateDiversionRoadsPhrase(
-					RDFdata.get("place").toString(), "around"));
-
-		/*
-		 * PPPhraseSpec secondary_location_phrase = null;
-		 * if(((String)RDFdata.get("place")).length()>0){ //secondary
-		 * location phrase goes at the end of message
-		 * tweet.addComplement(generateDiversionSecondaryLocationPhrase
-		 * (RDFdata.get("place").toString(),"into"));
-		 * 
-		 * if(generateDiversionSecondaryLocationPhrase(RDFdata.get(
-		 * "secondary-location").toString(),"at")!=null)
-		 * secondary_location_phrase =
-		 * generateDiversionSecondaryLocationPhrase(RDFdata
-		 * .get("secondary-location").toString(),"at"); }
-		 */
-
-		// String output = realiser.realiseSentence(tweet);
-		// System.out.println(output);
-
-		return tweet;
 	}
 	
 }
