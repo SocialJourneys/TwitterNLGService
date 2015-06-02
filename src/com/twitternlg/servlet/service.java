@@ -102,7 +102,7 @@ public class service extends HttpServlet {
 	    
 	    TweetFactory t = new TweetFactory();
 
-    	ArrayList <String>tweets = t.generateTweets(RDFdata);
+    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext());
     	
     	//out.println(t.testXPath(request.getServletContext(),RDFdata));
     	//if(tweets.size()>0)

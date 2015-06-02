@@ -14,7 +14,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.xpath.XPathExpression;
 import org.xml.sax.SAXException;
 
-public class NLGTemplateParser {
+public class NLGTemplateProcessor {
 	String emailpath = "//emailAddress";
 	String emailvalue = ".//value";
 

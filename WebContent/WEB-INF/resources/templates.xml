@@ -6,22 +6,20 @@ if a tag is required yes, then the phrase will be only generated with tag.
 priority: determines whether we should drop the phrase to reduce word count in the tweet. high: never drops, low is the first to drop incase of reduction.
  -->
 <templates>
-	<template id="0" event="diversion">
+	<template id="0" type="diversion">
 <!-- 
 <service> is being diverted (into | along) <location> and then (right along | into) < place >
  -->
-		<phrase priority="high">
-			<tag required="yes" type="primary">service</tag>
-			<expression>pre</expression>
+		<phrase priority="high" type="primary">
+			<tag required="yes">service</tag>
 			<complement type="verb">is</complement>
 			<complement type="object">diverted</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
 		</phrase>
-		<phrase priority="medium">
-			<expression>post</expression>
+		<phrase priority="medium" type="preposition">
 			<complement type="preposition">into|along</complement>
-			<tag required="yes">location</tag>
+			<tag required="yes">primaryLocation</tag>
 		</phrase>
-		<phrase priority="low">
+		<phrase priority="low" type="preposition">
 			<expression>post</expression>
 			<complement type="preposition">and then</complement>
 			<complement type="preposition">right along|into</complement>
@@ -31,7 +29,7 @@ priority: determines whether we should drop the phrase to reduce word count in t
 	</template>
 
 
-		<template id="1" event="diversion">
+		<templatex id="1" type="diversion">
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
@@ -57,5 +55,50 @@ priority: determines whether we should drop the phrase to reduce word count in t
 			<complement>due to</complement>
 			<tag required="yes">problem</tag>
 		</phrase>
-	</template>
+	</templatex>
+
+		<templatex id="2" type="diversion">
+	<!--
+	  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
+	  mins on] <route>] <time-interval>	
+	   -->
+		<phrase type="primary">
+			<expression>post</expression>
+			<complement type="noun">delays</complement>
+		</phrase>
+		<phrase type="preposition">
+			<expression>post</expression>
+			<complement type="preposition">of|of upto|</complement>
+			<tag required="yes">delayLength</tag>
+		</phrase>
+		<phrase type="preposition">
+			<expression>post</expression>
+			<complement type="preposition">to|on|</complement>
+			<tag required="yes">service-direction</tag>
+		</phrase>
+	</templatex>
+
+			<templatex id="3" type="diversion">
+	<!--
+	 <service> from <primary_location> is/are being diverted along
+	  < road >,< road >,< road >,< road > and < road >
+	   -->
+
+		<phrase type="primary">
+			<expression>post</expression>
+			<tag required="yes">service</tag>
+			<complement type="verb">is</complement>
+			<complement type="object">diverted</complement>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">from</complement>
+			<tag required="yes">primary_location</tag>
+		</phrase>
+		<phrase type="preposition">
+			<expression>post</expression>
+			<complement type="preposition">along|into</complement>
+			<tag required="yes">place</tag>
+		</phrase>
+	</templatex>
+
 </templates>
