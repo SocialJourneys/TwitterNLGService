@@ -3,6 +3,7 @@ package com.twitternlg.servlet;
 import com.google.gson.Gson;
 import com.twitternlg.nlg.ATweet;
 import com.twitternlg.nlg.TweetFactory;
+import com.twitternlg.templates.NLGTemplateProcessor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -100,9 +101,9 @@ public class service extends HttpServlet {
 	    //convert json string into hashmap
 	    Map<String, Object> RDFdata = gson.fromJson(body, HashMap.class);
 	    
-	    TweetFactory t = new TweetFactory();
-
-    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext());
+	   // TweetFactory t = new TweetFactory();
+	    NLGTemplateProcessor t = new NLGTemplateProcessor();
+    	ArrayList <String>tweets = t.generateTweets(RDFdata,request.getServletContext());
     	
     	//out.println(t.testXPath(request.getServletContext(),RDFdata));
     	//if(tweets.size()>0)

@@ -25,37 +25,32 @@ priority: determines whether we should drop the phrase to reduce word count in t
 			<complement type="preposition">right along|into</complement>
 			<tag required="yes">place</tag>
 		</phrase>
-		
 	</template>
 
 
-		<templatex id="1" type="diversion">
+		<template id="1" type="delay1">
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
-		<phrase>
-			<tag required="yes" type="primary">service</tag>
-			<expression>pre</expression>
-			<complement type="tag" required="no">direction</complement>
+		<phrase priority="high" type="primary">
+			<tag required="yes">service-direction</tag>
+			<complement type="verb">is</complement>
 		</phrase>
 		<phrase>
-			<expression>none</expression>
-			<complement>experiencing</complement>
-			<complement>delays</complement>
+			<tag required="yes">none</tag>
+			<complement type="none">experiencing</complement>
+			<complement type="none">delays</complement>
 			<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
 		</phrase>
 		<phrase>
-			<expression>post</expression>
-			<complement>delays</complement>
-			<complement>of|of approx|of upto</complement>
-			<tag required="yes">delay-size</tag>
+			<complement type="preposition">of|of approx|of upto|of approximately</complement>
+			<tag required="yes">delayLength</tag>
 		</phrase>
 		<phrase>
-			<expression>post</expression>
-			<complement>due to</complement>
-			<tag required="yes">problem</tag>
+			<complement type="preposition">due to</complement>
+			<tag required="yes">hasFactor</tag>
 		</phrase>
-	</templatex>
+	</template>
 
 		<templatex id="2" type="diversion">
 	<!--
