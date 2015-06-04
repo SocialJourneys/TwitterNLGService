@@ -41,6 +41,7 @@ import static com.twitternlg.nlg.Constants.KEY_EVENT_TYPE;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DELAY;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_UPCOMING;
+import static com.twitternlg.nlg.Constants.KEY_EVENT_ALL_OK;
 import static com.twitternlg.nlg.Constants.KEY_PROBLEM_REASON;
 import static com.twitternlg.nlg.Constants.KEY_BUS_SERVICES;
 import static com.twitternlg.nlg.Constants.KEY_BUS_SERVICES_DIRECTIONS;
@@ -52,8 +53,12 @@ import static com.twitternlg.nlg.Constants.KEY_DURATION;
 import static com.twitternlg.nlg.Constants.KEY_DIVERTED_ROADS_PLACES;
 import static com.twitternlg.nlg.Constants.KEYWORD_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEYWORD_DELAY;
+import static com.twitternlg.nlg.Constants.KEY_GREETING;
+import static com.twitternlg.nlg.Constants.KEY_TIMEOFDAY;
+import static com.twitternlg.nlg.Constants.KEY_TODAYS_TIMEOFDAY;
 import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DIVERSION_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DELAY_TAG;
+import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_ALL_OK;
 import static com.twitternlg.nlg.Constants.TEMPLATE_PROBLEM_REASON_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_SERVICE_DIRECTION_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_PRIMARY_LOCATION_TAG;
@@ -129,6 +134,54 @@ public class NLGTemplateProcessor {
 
 	}
 
+	public ArrayList<String> generateTweetss(Map<String, Object> RDFdata, ServletContext context) {
+		ArrayList<String> tweets = new ArrayList<String>();
+		
+		//realiser.realiseSentence(testXPath(context,RDFdata));
+
+		tweets = testXPath(context,RDFdata);
+		//String tweet = 	selectFinalTweet(tweets,RDFdata);
+		tweets = selectFinalTweet(tweets,RDFdata);
+		//do random stuff
+		//check for duplicate
+		return tweets;
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	private ArrayList<String> selectFinalTweet(ArrayList<String> tweets,Map<String, Object> RDFdata){
+
+		ArrayList<String>drop_tweets = null;
+		ArrayList<String>re_tweets = new ArrayList<String>();
+
+
+		//System.out.println(RDFdata.get("dropTweets").getClass());
+
+		//remove drop tweets from final array
+		if(RDFdata.containsKey("dropTweets")){
+			drop_tweets=(ArrayList<String>)RDFdata.get("dropTweets");
+		
+			for(String d_tweet: drop_tweets){
+				if(tweets.contains(d_tweet)){
+					tweets.remove(d_tweet);
+					System.out.println("removing: " + tweets.size());
+
+				}
+			}
+		}
+		
+		if(tweets.size()>0){
+		Random r = new Random();
+			int index = r.nextInt(tweets.size());
+			
+			System.out.println("selected tweet: "+tweets.get(index));
+			re_tweets.add(tweets.get(index));
+		}else
+			re_tweets.add("No tweet generated");
+		
+		return re_tweets;
+	}
+	
 	public ArrayList<String> generateTweets(Map<String, Object> RDFdata, ServletContext context) {
 		ArrayList<String> tweets = new ArrayList<String>();
 
@@ -138,8 +191,8 @@ public class NLGTemplateProcessor {
 					 * "<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>"
 					 * + "<strong>Message:</strong> "+
 					 */
-		//realiser.realiseSentence(generateDiversionTweetTemplate44(RDFdata))
-		realiser.realiseSentence(testXPath(context,RDFdata))
+		realiser.realiseSentence(generateDiversionTweetTemplate44(RDFdata))
+		//realiser.realiseSentence(testXPath(context,RDFdata))
 		/* + "<br/><br/>" */);
 			break;
 		case KEY_EVENT_DELAY:
@@ -147,7 +200,8 @@ public class NLGTemplateProcessor {
 						 * "<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>"
 						 * + "<strong>Message:</strong> "+
 						 */
-			realiser.realiseSentence(generateDelayTweetTemplate44(RDFdata))
+			realiser.realiseSentence(generateDiversionTweetTemplate44(RDFdata))
+			//realiser.realiseSentence(generateDelayTweetTemplate44(RDFdata))
 			/* + "<br/><br/>" */);
 
 			break;
@@ -156,7 +210,8 @@ public class NLGTemplateProcessor {
 						 * "<strong>T4:</strong>  delays (of | of up to) < number > mins (to | on) < route > [and [< number > mins on] < route >] < time-interval ><br/>"
 						 * + "<strong>Message:</strong> "+
 						 */
-					realiser.realiseSentence(testXPath(context,RDFdata))
+					realiser.realiseSentence(generateDiversionTweetTemplate44(RDFdata))
+					//realiser.realiseSentence(testXPath(context,RDFdata))
 			/* + "<br/><br/>" */);
 
 			break;
@@ -420,7 +475,7 @@ public class NLGTemplateProcessor {
 			else if (days_difference == 0)
 				phrase = "today";
 
-			if (hour >= 6 && hour <= 11) {
+			if (hour >= 6 && hour <= 12) {
 				if (phrase == "today")
 					phrase = "this morning";
 				else
@@ -430,14 +485,14 @@ public class NLGTemplateProcessor {
 					phrase = "this afternoon";
 				else
 					phrase = phrase + " " + "afternoon";
-			} else if (hour >= 17 && hour <= 19) {
+			} else if (hour >= 18 && hour <= 20) {
 				if (phrase == "today")
 					phrase = "this evening";
 				else
 					phrase = phrase + " " + "evening";
 			}
 
-			else if (hour >= 21) {
+			else if (hour >= 22) {
 				if (phrase == "today")
 					phrase = "tonight";
 				else
@@ -463,6 +518,51 @@ public class NLGTemplateProcessor {
 		return results;
 	}
 
+	/*
+	 * Determines past,present or future tense based on given date/time in the
+	 * annotation
+	 */
+	private String calculateTimeOfTheDay(String timestamp_string) {
+		Date timestamp = new Date();
+		
+		if(timestamp_string==null || timestamp_string.length()==0)
+			timestamp = new Date();
+		else{
+			//create date from string
+		}
+		
+		int hour = timestamp.getHours();
+
+		String phrase = "";
+		
+		if (hour >= 3 && hour <= 12)
+			phrase = "morning";
+		else if (hour >= 12 && hour <= 18)
+			phrase = "afternoon";
+		else if (hour >= 18 && hour <= 20)
+			phrase = "evening";
+		else if (hour >= 23)
+			phrase = "tonight";
+
+		//System.out.println("calculateTimeOfTheDay "+ phrase);
+		return phrase;
+	}
+	
+	/*
+	 * calculates time of the day sring
+	 */
+	private NPPhraseSpec generateTimeOfDay(String timestamp_string){
+		
+		NPPhraseSpec timeOfTheDay_obj=null;
+		String timeOfTheDay_string ="";
+		
+		timeOfTheDay_string = calculateTimeOfTheDay(timestamp_string);
+
+		timeOfTheDay_obj = nlgFactory.createNounPhrase(timeOfTheDay_string);
+		
+		return timeOfTheDay_obj;
+	}
+	
 	private String createDateString(Map<String, Object> RDFdata,
 			String start_end) {
 		ArrayList<Object> arr = createDateFormat(RDFdata, start_end);
@@ -551,6 +651,46 @@ public class NLGTemplateProcessor {
 		return buses;
 	}
 
+	/*
+	 * Generate greeting phrase
+	 */
+	private CoordinatedPhraseElement generateGreetingPhrase(Map<String, Object> RDFdata) {
+		String greeting_string = "";
+		String todays_timeOfDay_string = "";
+		
+		/*if(RDFdata.containsKey(KEY_GREETING))
+				greeting_string=RDFdata.get(KEY_GREETING).toString();*/
+		
+		//get morning,afternoon,evening
+	
+//		if(RDFdata.containsKey(KEY_TODAYS_TIMEOFDAY)){
+//			todays_timeOfDay_string=RDFdata.get(KEY_TODAYS_TIMEOFDAY).toString();
+		NPPhraseSpec timeOfDay = generateTimeOfDay(null);
+		
+		todays_timeOfDay_string=" "+realiser.realise(timeOfDay)+",";
+	//	}
+	
+		CoordinatedPhraseElement greeting = nlgFactory.createCoordinatedPhrase();
+
+		//create the list of greetings
+		ArrayList<String> greetings = new ArrayList<String>(Arrays.asList(
+				"Hi,","Hello,","Happy Friday!","Hello sir/madam,","Hey m8,",
+				"Dude,","Greetings traveller,","Hola,","Ciao,","Relax my friend,"));
+		
+		greetings.add("Good"+todays_timeOfDay_string);
+		
+		
+		//pickup a random greeting message
+		int index = getRandomIndex(greetings.size());
+		greeting_string=greetings.get(index);
+	
+		//generate the NLG phrase
+		NPPhraseSpec greeting_obj = nlgFactory.createNounPhrase(greeting_string);
+		greeting.addCoordinate(greeting_obj);
+		
+		return greeting;
+	}
+	
 	private CoordinatedPhraseElement generateBusServicesWithDirections(
 			Map<String, Object> RDFdata) {
 		String buses_string = (String) RDFdata.get(KEY_BUS_SERVICES);
@@ -1122,16 +1262,12 @@ public class NLGTemplateProcessor {
 		return tweet;
 	}
 
-	private SPhraseSpec shuffleOrder(Map<String, Object> RDFdata) {
+	private int getRandomIndex(int count) {
 
 		Random r = new Random();
-		int i1 = r.nextInt(4);
-		/*
-		 * if(primary_location and secondary_location) if(roads) is being
-		 * divering along locatin and then into roads if(primary_location and
-		 * and roads secondary_location) route(s)primary_location
-		 */
-		return null;
+		int index = r.nextInt(count);
+
+		return index;
 	}
 
 	/*
@@ -1373,11 +1509,20 @@ public class NLGTemplateProcessor {
 			phrase3.setPreposition("on");
 		}
 		
+		SPhraseSpec phrase4 = nlgFactory.createClause();
+
+		String bus_services_string = RDFdata.get(KEY_BUS_SERVICES).toString();
+		CoordinatedPhraseElement phrase4_buses = generateBusServicesPhrase(bus_services_string);
+		
+		phrase4.setSubject(phrase4_buses);
+		
 		//tweet.addComplement(phrase1);
 		tweet=phrase1;
 		tweet.addComplement(phrase2);
 		tweet.addComplement(phrase3);
-
+		
+		tweet.addPostModifier(phrase4);
+//		tweet.addComplement(phrase4);
 		return tweet;
 	}
 
@@ -1419,8 +1564,11 @@ public class NLGTemplateProcessor {
 		return doc;
 	}
 	
-	public SPhraseSpec testXPath(ServletContext context, Map<String,Object>RDFData){
-		SPhraseSpec tweet = nlgFactory.createClause();;
+	public ArrayList<String> testXPath(ServletContext context, Map<String,Object>RDFData){
+		
+		SPhraseSpec tweet = null;
+		ArrayList<String> outputArray = new ArrayList<String>();
+
 		Document doc = loadXML(context);
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
@@ -1436,7 +1584,12 @@ public class NLGTemplateProcessor {
 		case KEY_EVENT_UPCOMING:
 			templateType = KEY_EVENT_UPCOMING;
 			break;
+		case KEY_EVENT_ALL_OK:
+			templateType = TEMPLATE_EVENT_ALL_OK;
+			break;
 		}
+		
+		
 		try{
 		
 		//XPathExpression expr = xpath.compile("/templates/template[@id='0']/phrase/tag/text()");
@@ -1448,11 +1601,10 @@ public class NLGTemplateProcessor {
 
 		//output = "nodes: "+ templates.getLength();
 		
-		ArrayList<String> outputArray = new ArrayList<String>();
 		//phrases loop
 		for(int i = 0; i < templates.getLength(); i++){
 			
-
+			tweet = nlgFactory.createClause();
 
 			Node template = templates.item(i);
 			  NodeList phrases = (NodeList) xpath.evaluate("phrase", template, XPathConstants.NODESET);
@@ -1489,7 +1641,7 @@ public class NLGTemplateProcessor {
 			      if(phraseType.equals("primary") || phraseType.equals("secondary")){
 			    	  part_phrase_sp = nlgFactory.createClause();
 			    	  part_phrase_sp.setSubject(extractPhraseTagSP(tagValue,RDFData));
-				      //System.out.println("phraseType: " + part_phrase_sp.getSubject().toString());
+				      //System.out.println("setting subject: " + tagValue);
 			      }
 			      else{
 			    	  //part_phrase_pp = nlgFactory.createPrepositionPhrase();
@@ -1498,7 +1650,7 @@ public class NLGTemplateProcessor {
 			      //System.out.println("phraseType: " + part_phrase_sp.getSubject().toString());
 
 				 // System.out.println("complements : " + complements.getLength());
-				//System.out.println("tagValue: " + tagValue);
+				System.out.println("tagValue: " + tagValue);
 				  String preposition_string="";
 				  
 				  //iterate the complements only if the tag is required
@@ -1514,11 +1666,10 @@ public class NLGTemplateProcessor {
 					     // String complementValue = xpath.evaluate("complement", phrase);
 						  String complementValue =  compliment_node.getTextContent();
 						 //System.out.println("complementValue: " + compliment_node.getTextContent());
-						 //System.out.println("complementValue: " + complementValue);
-
+						 //
 					      //String RDFComplementValue = RDFData.get(complementValue).toString();
 						  String complementType = complement.getAttribute("type");
-						  //if complement is a tag
+						  //check complement 
 						  switch (complementType){
 						  	  case "verb":
 						  		VPPhraseSpec verb_phrase = nlgFactory.createVerbPhrase(complementValue);
@@ -1541,8 +1692,9 @@ public class NLGTemplateProcessor {
 								  
 								  break;
 						  }
-					  }
-				  if(preposition_string.length()>0)
+					  }//complements loop
+				  
+				  if(preposition_string.length()>0 && part_phrase_pp!=null)
 					  part_phrase_pp.setPreposition(preposition_string);
 				  
 			      if(phraseType.equals("primary")){
@@ -1551,13 +1703,17 @@ public class NLGTemplateProcessor {
 			      }
 			      else{
 			    	  if(part_phrase_sp!=null)
-			    		  tweet.addComplement(part_phrase_sp);
+			    		  tweet.addPostModifier(part_phrase_sp);
+			    		 // tweet.addComplement(part_phrase_sp);
 			    	  if(part_phrase_pp!=null)
+			    		 // tweet.addPostModifier(part_phrase_pp);
+
 			    		  tweet.addComplement(part_phrase_pp);
 			      }
 
 			  }//phrases loop
 			  
+			  outputArray.add(realiser.realiseSentence(tweet));
 			}//templates loop
 		
 		}//try
@@ -1565,9 +1721,12 @@ public class NLGTemplateProcessor {
 			e.printStackTrace();
 		}
 		
-		return tweet;
+		return outputArray;
 	}
 	
+	/*
+	 * random preposition selector
+	 */
 	private String selectionPreposition(String prepositions_string){
 		List<String> prepositions_list = new ArrayList<String>();
 
@@ -1580,6 +1739,9 @@ public class NLGTemplateProcessor {
 		return prepositions_list.get(random_index);
 	}
 	
+	/*
+	 * extractdata for SPPhrase
+	 */
 	private CoordinatedPhraseElement extractPhraseTagSP(String tag, Map<String,Object>RDFData){
 		CoordinatedPhraseElement element = null;
 		switch (tag){
@@ -1592,11 +1754,20 @@ public class NLGTemplateProcessor {
 			CoordinatedPhraseElement buses_directions = generateBusServicesWithDirections(RDFData);
 			element = buses_directions;
 			break;
+		case KEY_GREETING:
+			//String greeting_message  = RDFData.get(KEY_GREETING).toString();
+			CoordinatedPhraseElement greeting = generateGreetingPhrase(RDFData);
+			element = greeting;
+			//System.out.println("KEY_GREETING "+ realiser.realise(element));
+			break;	
 		}
 		return element;
 		
 	}
 	
+	/*
+	 * extractdata for PPPhraseSpec
+	 */
 	private PPPhraseSpec extractPhraseTagPP(String tag, Map<String,Object>RDFData){
 		PPPhraseSpec element = null;
 		switch (tag){
@@ -1634,6 +1805,19 @@ public class NLGTemplateProcessor {
 			PPPhraseSpec duration_phrase = generateProblemReasonPhrase(duration);
 			element = duration_phrase;
 			break;
+		case KEY_TODAYS_TIMEOFDAY:	
+			//System.out.println("KEY_TODAYS_TIMEOFDAY "+ realiser.realise(timeOfDay));
+			String timeOfDay = "this "+calculateTimeOfTheDay("");
+			PPPhraseSpec timeOfDay_phrase = generateProblemReasonPhrase(timeOfDay);
+			element = timeOfDay_phrase;
+
+			break;
+
+		/*case KEY_TIMEOFDAY:	
+			String timeOfDay = (String) RDFData.get(KEY_TIMEOFDAY);
+			PPPhraseSpec timeOfDay_phrase = generateProblemReasonPhrase(timeOfDay);
+			element = timeOfDay_phrase;
+			break;*/
 		case "none":	
 			element = nlgFactory.createPrepositionPhrase();
 			break;

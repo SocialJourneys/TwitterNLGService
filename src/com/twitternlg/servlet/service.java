@@ -103,13 +103,14 @@ public class service extends HttpServlet {
 	    
 	   // TweetFactory t = new TweetFactory();
 	    NLGTemplateProcessor t = new NLGTemplateProcessor();
-    	ArrayList <String>tweets = t.generateTweets(RDFdata,request.getServletContext());
+    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext());
     	
     	//out.println(t.testXPath(request.getServletContext(),RDFdata));
     	//if(tweets.size()>0)
     		//out.println(tweets.get(0));
 	    for(String objTweet: tweets){
     	out.println(objTweet);
+    	out.println("\n");
 
     	}	
     	

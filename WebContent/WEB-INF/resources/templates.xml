@@ -1,9 +1,14 @@
 <?xml version="1.0"?>
 
 <!-- 
-pre/post/none: placement of tag in the phrase
-if a tag is required yes, then the phrase will be only generated with tag.
-priority: determines whether we should drop the phrase to reduce word count in the tweet. high: never drops, low is the first to drop incase of reduction.
+	Currently SimpleNLG library only allows one verb per phrase. 
+	So I have divided the tweet into multipe phrases.
+	The first phrase should always be the primary type.
+	If there is any other phrase with a verb, it should be a secondary type phrase.
+
+	tag - RDFData property. Tag always become the subject in a phrase
+	complement - preposition, verb or object
+	ignore Priority for now.
  -->
 <templates>
 	<template id="0" type="diversion">
@@ -28,7 +33,7 @@ priority: determines whether we should drop the phrase to reduce word count in t
 	</template>
 
 
-		<template id="1" type="delay">
+	<template id="1" type="delay">
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
@@ -52,9 +57,140 @@ priority: determines whether we should drop the phrase to reduce word count in t
 		</phrase>
 	</template>
 
+
+	<template id="3" type="diversion1">
+	<!--
+	  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
+	  mins on] <route>] <time-interval>	
+	   -->
+		<phrase type="primary">
+			<complement type="noun">delays</complement>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">of|of upto|</complement>
+			<tag required="yes">delayLength</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">to|on|</complement>
+			<tag required="yes">service-direction</tag>
+		</phrase>
+	</template>
+
+	<template id="4" type="diversion1">
+	<!--
+	 <service> from <primary_location> is/are being diverted along
+	  < road >,< road >,< road >,< road > and < road >
+	   -->
+
+		<phrase type="primary">
+			<tag required="yes">service</tag>
+			<complement type="verb">is</complement>
+			<complement type="object">diverted</complement>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">from</complement>
+			<tag required="yes">primaryLocation</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">along|into</complement>
+			<tag required="yes">place</tag>
+		</phrase>
+	</template>
+
+
+<!-- BEGIN ALL_OK TEMPLATES-->
+
+
+	<!--
+		<Greeting>, looks like everything should be fine for your journey this morning|afternoon|evening	-->
+	<template id="ao1" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="preposition">looks like everything should be fine for your journey</complement>
+			<tag required="yes">todaysTimeOfDay</tag>
+		</phrase>
+	</template>
+
+
+	<!--
+		<Greeting>, we’re not aware of anything that should affect your journey this morning|afternoon|evening
+
+			-->
+	<template id="ao2" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="preposition">we're not aware of anything that should affect your journey</complement>
+			<tag required="yes">todaysTimeOfDay</tag>
+		</phrase>
+	</template>
+
+	<!--
+		<Greeting>, we’re not aware of anything that should affect you next journey
+			-->
+	<template id="ao3" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="none">we're not aware of anything that should affect your next journey</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+	</template>
+
+
+	<!--
+	<Greeting>, it doesn't look like your journey should experience any delays.
+			-->
+	<template id="ao4" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="none">it doesn't look like your journey should experience any delays</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+	</template>
+
+	<!--
+	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
+			-->
+	<template id="ao5" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="none">we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+	</template>
+
+	<!--
+	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
+			-->
+	<template id="ao5" type="all_ok">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<complement type="none">we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+	</template>
+
+<!-- END ALL_OK TEMPLATES-->
+
+
+
+
+<!-- BEGIN UPCOMING JOURNEY TEMPLATES-->
+
 		<template id="2" type="upcoming">
 	<!--
-	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
+		<greeting>, your bus <service< is arriving in <duration>
 	 -->
 		<phrase priority="high" type="primary">
 			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -62,7 +198,6 @@ priority: determines whether we should drop the phrase to reduce word count in t
 		<phrase>
 			<tag required="yes">none</tag>
 			<complement type="none">your bus</complement>
-			<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
 		</phrase>
 		<phrase type="secondary">
 			<tag required="yes">service</tag>
@@ -75,48 +210,8 @@ priority: determines whether we should drop the phrase to reduce word count in t
 		</phrase>
 	</template>
 
-		<templatex id="3" type="diversion1">
-	<!--
-	  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
-	  mins on] <route>] <time-interval>	
-	   -->
-		<phrase type="primary">
-			<expression>post</expression>
-			<complement type="noun">delays</complement>
-		</phrase>
-		<phrase type="preposition">
-			<expression>post</expression>
-			<complement type="preposition">of|of upto|</complement>
-			<tag required="yes">delayLength</tag>
-		</phrase>
-		<phrase type="preposition">
-			<expression>post</expression>
-			<complement type="preposition">to|on|</complement>
-			<tag required="yes">service-direction</tag>
-		</phrase>
-	</templatex>
 
-			<templatex id="4" type="diversion1">
-	<!--
-	 <service> from <primary_location> is/are being diverted along
-	  < road >,< road >,< road >,< road > and < road >
-	   -->
+<!-- END UPCOMING JOURNEY TEMPLATES-->
 
-		<phrase type="primary">
-			<expression>post</expression>
-			<tag required="yes">service</tag>
-			<complement type="verb">is</complement>
-			<complement type="object">diverted</complement>
-		</phrase>
-		<phrase type="preposition">
-			<complement type="preposition">from</complement>
-			<tag required="yes">primary_location</tag>
-		</phrase>
-		<phrase type="preposition">
-			<expression>post</expression>
-			<complement type="preposition">along|into</complement>
-			<tag required="yes">place</tag>
-		</phrase>
-	</templatex>
 
 </templates>

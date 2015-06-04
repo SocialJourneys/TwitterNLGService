@@ -15,6 +15,7 @@ public final class Constants {
     public static final String KEY_EVENT_DIVERSION = "PublicTransportDiversion";
     public static final String KEY_EVENT_DELAY = "PublicTransportDelay";
     public static final String KEY_EVENT_UPCOMING = "upcoming";
+    public static final String KEY_EVENT_ALL_OK = "ALL_OK";
 
     public static final String KEY_PROBLEM_REASON = "hasFactor";
     public static final String KEY_BUS_SERVICES = "service";
@@ -24,6 +25,9 @@ public final class Constants {
     public static final String KEY_END_TIME = "endsAtTime";
     public static final String KEY_DIVERTED_ROADS_PLACES = "place";
     public static final String KEY_DELAY_LENGTH = "delayLength";
+
+    public static final String KEY_TIMEOFDAY = "timeOfDay";
+    public static final String KEY_TODAYS_TIMEOFDAY = "todaysTimeOfDay";
 
     public static final String KEY_GREETING = "greeting";
     public static final String KEY_USERNAME = "username";
@@ -39,6 +43,7 @@ public final class Constants {
     public static final String TEMPLATE_EVENT_TYPE_TAG = "event";
     public static final String TEMPLATE_EVENT_DIVERSION_TAG = "diversion";
     public static final String TEMPLATE_EVENT_DELAY_TAG = "delay";
+    public static final String TEMPLATE_EVENT_ALL_OK = "all_ok";
     public static final String TEMPLATE_PROBLEM_REASON_TAG = "problem";
     public static final String TEMPLATE_SERVICE_DIRECTION_TAG = "service-direction";
     public static final String TEMPLATE_PRIMARY_LOCATION_TAG = "primaryLocation";
