@@ -1550,11 +1550,11 @@ public class NLGTemplateProcessor {
 	private Document loadXML(ServletContext context){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
-		String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
+//		String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
 		Document doc = null;
 		try {
 			builder = factory.newDocumentBuilder();
-			doc = builder.parse(fullPath);
+			doc = builder.parse("http://sj.abdn.ac.uk/NLG/templates.xml");
 
 		} 
 		catch(Exception e){
@@ -1721,6 +1721,7 @@ public class NLGTemplateProcessor {
 			e.printStackTrace();
 		}
 		
+		doc=null;
 		return outputArray;
 	}
 	
