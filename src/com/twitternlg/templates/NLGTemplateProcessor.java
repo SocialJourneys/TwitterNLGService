@@ -41,6 +41,8 @@ import static com.twitternlg.nlg.Constants.KEY_EVENT_TYPE;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_DELAY;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_REAL_TIME;
+import static com.twitternlg.nlg.Constants.KEY_EVENT_REAL_TIME5;
+import static com.twitternlg.nlg.Constants.KEY_EVENT_QUESTIONNAIRE;
 import static com.twitternlg.nlg.Constants.KEY_EVENT_ALL_OK;
 import static com.twitternlg.nlg.Constants.KEY_PROBLEM_REASON;
 import static com.twitternlg.nlg.Constants.KEY_BUS_SERVICES;
@@ -573,7 +575,7 @@ public class NLGTemplateProcessor {
 		NPPhraseSpec timeOfTheDay_obj=null;
 		String timeOfTheDay_string ="";
 		
-		timeOfTheDay_string = (calculateTimeOfTheDay(timestamp_string)).get("phrase");
+		timeOfTheDay_string = calculateTimeOfTheDay(timestamp_string).get("phrase");
 
 		timeOfTheDay_obj = nlgFactory.createNounPhrase(timeOfTheDay_string);
 		
@@ -695,7 +697,9 @@ public class NLGTemplateProcessor {
 				"Dude,","Greetings traveller,","Hola,","Ciao,","Relax my friend,"));
 		
 		greetings.add("Good"+todays_timeOfDay_string);
-		greetings.add("Happy "+calculateTimeOfTheDay(null).get("day")+"!");
+		
+		if(calculateTimeOfTheDay(null).get("day").equals("Friday"))
+			greetings.add("Happy Friday!");
 		
 		//pickup a random greeting message
 		int index = getRandomIndex(greetings.size());
@@ -978,7 +982,7 @@ public class NLGTemplateProcessor {
 					RDFdata.get("place").toString(), "around"));
 
 		
-		 PPPhraseSpec secondary_location_phrase = null;
+		 PPPhraseSpec secondary_location_phrase = null; //todo
 		  if(((String)RDFdata.get("place")).length()>0){ //secondary
 		  //location phrase goes at the end of message
 		  tweet.addComplement(generateDiversionSecondaryLocationPhrase
@@ -1235,6 +1239,8 @@ public class NLGTemplateProcessor {
 	}
 
 	/*
+	 * <route><location> diversion in place on <date> for <timeInterval>
+	 * 
 	 * <route><location> diversion in place on <date> for <timeInterval>
 	 */
 	private SPhraseSpec generateDiversionTweetTemplate6(
@@ -1605,8 +1611,14 @@ public class NLGTemplateProcessor {
 		case KEY_EVENT_REAL_TIME:
 			templateType = KEY_EVENT_REAL_TIME;
 			break;
+		case KEY_EVENT_REAL_TIME5:
+			templateType = KEY_EVENT_REAL_TIME5;
+			break;
 		case KEY_EVENT_ALL_OK:
 			templateType = TEMPLATE_EVENT_ALL_OK;
+			break;
+		case KEY_EVENT_QUESTIONNAIRE:
+			templateType = KEY_EVENT_QUESTIONNAIRE;
 			break;
 		}
 		
@@ -1719,7 +1731,7 @@ public class NLGTemplateProcessor {
 				  
 				  if(preposition_string.length()>0 && part_phrase_pp!=null){
 					  part_phrase_pp.setPreposition(preposition_string);
-					System.out.println("part_phrase_pp "+ realiser.realise(part_phrase_pp));
+					//System.out.println("part_phrase_pp "+ realiser.realise(part_phrase_pp));
 
 				  }
 				  
@@ -1845,8 +1857,8 @@ public class NLGTemplateProcessor {
 				element.addComplement(service_time_phrase);
 				break;
 			case KEY_TODAYS_TIMEOFDAY:	
-				//System.out.println("KEY_TODAYS_TIMEOFDAY "+ realiser.realise(timeOfDay));
-				String timeOfDay = "this "+calculateTimeOfTheDay("");
+				String timeOfDay = "this "+calculateTimeOfTheDay("").get("phrase");
+				//System.out.println("KEY_TODAYS_TIMEOFDAY "+ timeOfDay);
 				PPPhraseSpec timeOfDay_phrase = generateProblemReasonPhrase(timeOfDay);
 				element = timeOfDay_phrase;
 	

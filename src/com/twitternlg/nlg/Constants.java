@@ -15,7 +15,9 @@ public final class Constants {
     public static final String KEY_EVENT_DIVERSION = "PublicTransportDiversion";
     public static final String KEY_EVENT_DELAY = "PublicTransportDelay";
     public static final String KEY_EVENT_REAL_TIME = "RealTime";
+    public static final String KEY_EVENT_REAL_TIME5 = "RealTime5";
     public static final String KEY_EVENT_ALL_OK = "ALL_OK";
+    public static final String KEY_EVENT_QUESTIONNAIRE = "Questionnaire";
 
     public static final String KEY_PROBLEM_REASON = "hasFactor";
     public static final String KEY_BUS_SERVICES = "service";
