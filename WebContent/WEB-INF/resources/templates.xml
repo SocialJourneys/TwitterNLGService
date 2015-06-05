@@ -11,7 +11,7 @@
 	ignore Priority for now.
  -->
 <templates>
-	<template id="0" type="diversion">
+	<template id="0" type="diversion1">
 <!-- 
 <service> is being diverted (into | along) <location> and then (right along | into) < place >
  -->
@@ -33,7 +33,7 @@
 	</template>
 
 
-	<template id="1" type="delay">
+	<template id="1" type="delay1">
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
@@ -57,7 +57,48 @@
 		</phrase>
 	</template>
 
-
+	<template id="1" type="delay">
+	<!--
+Hi, just to let you know we've heard there are delays 
+up to <7 minutes> <this morning|afternoon|evening> on the <ServiceX>
+	 -->
+		<phrase priority="high" type="primary">
+			<tag required="yes">greeting</tag>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes">delayLength</tag>
+			<complement type="preposition">just to let you know we've heard there are delays up to</complement>
+		</phrase>
+		<phrase>
+			<tag required="yes">todaysTimeOfDay</tag>
+		</phrase>
+		<phrase>
+			<tag required="yes">service</tag>
+			<complement type="preposition">on the</complement>
+		</phrase>
+	</template>
+	
+		<template id="1" type="delay">
+	<!--
+Hi, just to make you aware there are delays up to <7 minutes> reported <this morning|afternoon|evening> on the <ServiceX>
+	 -->
+		<phrase priority="high" type="primary">
+			<tag required="yes">greeting</tag>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes">delayLength</tag>
+			<complement type="preposition">just to make you aware there are delays up to</complement>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes">todaysTimeOfDay</tag>
+			<complement type="preposition">reported</complement>
+		</phrase>
+		<phrase>
+			<tag required="yes">service</tag>
+			<complement type="preposition">on the</complement>
+		</phrase>
+	</template>
+	
 	<template id="3" type="diversion1">
 	<!--
 	  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
@@ -188,10 +229,10 @@
 
 <!-- BEGIN UPCOMING JOURNEY TEMPLATES-->
 
-		<template id="2" type="upcoming">
 	<!--
 		<greeting>, your bus <service< is arriving in <duration>
 	 -->
+	<template id="2" type="upcoming1">
 		<phrase priority="high" type="primary">
 			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
 		</phrase>
@@ -206,6 +247,41 @@
 		</phrase>
 		<phrase>
 			<complement type="preposition">in</complement>
+			<tag required="yes">duration</tag>
+		</phrase>
+	</template>
+
+	<!--
+	<Greeting>, looks like your ServiceX bus[es] will be leaving at A[, B, C]
+	 -->
+	<template id="2" type="RealTime">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<tag required="yes">service</tag>
+			<complement type="preposition">looks like your</complement>
+		</phrase>
+		<phrase>
+			<complement type="preposition">will be leavning at</complement>
+			<tag required="yes">serviceTime</tag>
+		</phrase>
+	</template>
+
+
+	<!--
+<Greeting>, your ServiceX bus is expected in B mins
+	 -->
+	<template id="2" type="RealTime">
+		<phrase priority="high" type="primary">
+			<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+		</phrase>
+		<phrase>
+			<tag required="yes">service</tag>
+			<complement type="preposition">your</complement>
+		</phrase>
+		<phrase>
+			<complement type="preposition">bus is expected in</complement>
 			<tag required="yes">duration</tag>
 		</phrase>
 	</template>
