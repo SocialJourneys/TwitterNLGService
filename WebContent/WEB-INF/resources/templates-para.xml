@@ -1,0 +1,789 @@
+<?xml version="1.0"?>
+
+<!-- 
+	Currently SimpleNLG library only allows one verb per phrase. 
+	So I have divided the tweet into multipe phrases.
+	The first phrase should always be the primary type.
+	If there is any other phrase with a verb, it should be a secondary type phrase.
+
+	tag - RDFData property. Tag always become the subject in a phrase
+	complement - preposition, verb or object
+	ignore Priority for now.
+ -->
+<templates>
+<!-- 
+!!<service> is being diverted (into | along) <location> and then (right along | into) < place >
+
+<service> is being diverted (at | ) <primaryLocation> and then (right along | into) < place >
+ -->
+ 	<paragraph type="paragraph">
+ 		<template>
+			<phrase type="primary">
+				<tag required="yes" type="subject">service</tag>
+				<complement type="verb">is</complement>
+				<complement type="object">diverted</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">at</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">and then</complement>
+				<complement type="preposition">right along|into</complement>
+				<tag required="yes">place</tag>
+			</phrase>
+		</template>
+
+	 	<template>
+			<phrase type="primary">
+				<tag required="yes">none</tag>
+				<complement type="preposition">All other services working fine</complement>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+ 	<paragraph type="paragraph">
+	 	<template>
+			<phrase type="preposition">
+				<complement type="preposition">due to</complement>
+				<tag required="yes" type="subject">hasFactor</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">on</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes" >service</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">currently being diverted</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+
+		 <template>
+			<phrase type="primary">
+				<tag required="yes">none</tag>
+				<complement type="preposition">More updates to follow</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
+			</phrase>
+		</template>
+ 	</paragraph>
+
+<!--
+	 <service> <primary_location> diversion starts from <startsAtDateTime> until <endsAtDateTime>
+	!-->
+ 	<paragraph type="diversion1">
+	 	<template id="div1" type="diversion1">
+			<phrase type="primary">
+				<tag required="yes" type="subject">service</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="secondary">
+				<complement type="subject">diversion</complement>
+				<complement type="verb">start</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">startEndDateTime</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+
+
+<!--
+/*
+	 * <service> diversion starts from <startsAtDateTime> until <endsAtDateTime> for <delayLength> only - <location>
+	 */	!-->
+ 	<paragraph type="diversion1">
+	 	<template id="div2" type="diversion1">
+			<phrase type="primary">
+				<tag required="yes" type="subject">service</tag>
+			</phrase>
+			<phrase type="secondary">
+				<complement type="subject">diversion</complement>
+				<complement type="verb">start</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">startEndDateTime</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">for</complement>
+				<tag required="yes">delayLength</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">only</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">-</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+<!--
+/*
+	 <route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road >
+	 */	!-->
+ 	<paragraph type="diversion1">
+	 	<template id="div2" type="diversion1">
+			<phrase type="primary">
+				<tag required="yes" type="subject">service</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">from</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="secondary">
+				<tag required="yes" include="no">service</tag>
+				<complement type="verb">is</complement>
+				<complement type="object">diverted</complement>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">along</complement>
+				<tag required="yes">place</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+
+
+	 <!--
+	  due to <hasFactor> on <primaryLocation> <service> and <service> currently being diverted
+	 	 */	!-->
+ 	<paragraph type="diversion">
+	 	<template id="div2" type="diversion">
+			<phrase type="preposition">
+				<complement type="preposition">due to</complement>
+				<tag required="yes" type="subject">hasFactor</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">on</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes" >service</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">currently being diverted</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+
+ 	<paragraph type="delay1">
+		<template id="1" type="delay1">
+		<!--
+		<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
+		 -->
+			<phrase type="primary">
+				<tag required="yes" type="subject">service-direction</tag>
+				<complement type="verb">is</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">none</tag>
+				<complement type="none">experiencing</complement>
+				<complement type="none">delays</complement>
+				<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
+			</phrase>
+			<phrase>
+				<complement type="preposition">of|of approx|of upto|of approximately</complement>
+				<tag required="yes">delayLength</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">due to</complement>
+				<tag required="yes">hasFactor</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+
+ 	<paragraph type="delay">
+		<template id="1" type="delay">
+		<!--
+	Hi, just to let you know we've heard there are delays 
+	up to <7 minutes> <this morning|afternoon|evening> on the <ServiceX>
+		 -->
+			<phrase type="primary">
+				<tag required="yes">greeting</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">delayLength</tag>
+				<complement type="preposition">just to let you know we've heard there are delays up to</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">on the</complement>
+			</phrase>
+		</template>
+	</paragraph>
+
+ 	<paragraph type="delay">
+		<template id="1" type="delay">
+		<!--
+	Hi, just to make you aware there are delays up to <7 minutes> reported <this morning|afternoon|evening> on the <ServiceX>
+		 -->
+			<phrase type="primary">
+				<tag required="yes">greeting</tag>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">delayLength</tag>
+				<complement type="preposition">just to make you aware there are delays up to</complement>
+			</phrase>
+			<phrase type="preposition">
+				<tag required="yes">todaysTimeOfDay</tag>
+				<complement type="preposition">reported</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">on the</complement>
+			</phrase>
+		</template>
+	</paragraph>
+
+ 	<paragraph type="diversion1">
+		<template id="3" type="diversion1">
+		<!--
+		  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
+		  mins on] <route>] <time-interval>	
+		   -->
+			<phrase type="primary">
+				<complement type="noun">delays</complement>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">of|of upto|</complement>
+				<tag required="yes">delayLength</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">to|on|</complement>
+				<tag required="yes">service-direction</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+ 	<paragraph type="diversion1">
+		<template id="4" type="diversion1">
+		<!--
+		 <service> from <primary_location> is/are being diverted along
+		  < road >,< road >,< road >,< road > and < road >
+		   -->
+
+			<phrase type="primary">
+				<tag required="yes">service</tag>
+				<complement type="verb">is</complement>
+				<complement type="object">diverted</complement>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">from</complement>
+				<tag required="yes">primaryLocation</tag>
+			</phrase>
+			<phrase type="preposition">
+				<complement type="preposition">along|into</complement>
+				<tag required="yes">place</tag>
+			</phrase>
+		</template>
+ 	</paragraph>
+
+
+<!-- BEGIN ALL_OK TEMPLATES-->
+
+
+	<!--
+		<Greeting>, looks like everything should be fine for your journey this morning|afternoon|evening	-->
+	<paragraph type="all_ok">
+		<template id="ao1" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="preposition">looks like everything should be fine for your journey</complement>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+	<!--
+		<Greeting>, we’re not aware of anything that should affect your journey this morning|afternoon|evening
+
+			-->
+	<paragraph type="all_ok">
+		<template id="ao2" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="preposition">we're not aware of anything that should affect your journey</complement>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+		<Greeting>, we’re not aware of anything that should affect you next journey
+			-->
+	<paragraph type="all_ok">
+		<template id="ao3" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="none">we're not aware of anything that should affect your next journey</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+	<!--
+	<Greeting>, it doesn't look like your journey should experience any delays.
+			-->
+	<paragraph type="all_ok">
+		<template id="ao4" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="none">it doesn't look like your journey should experience any delays</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
+			-->
+	<paragraph type="all_ok">
+		<template id="ao5" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="none">we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
+			-->
+	<paragraph type="all_ok">
+		<template id="ao5" type="all_ok">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<complement type="none">we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+We’re not aware of any delays on your route this morning|afternoon|evening.
+			-->
+	<paragraph type="all_ok">
+		<template id="ao5" type="all_ok">
+			<phrase>
+				<complement type="none">We're not aware of any delays on your route</complement>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!-- END ALL_OK TEMPLATES-->
+
+
+
+
+<!-- BEGIN REALTIME JOURNEY TEMPLATES-->
+
+	<!--
+		<greeting>, your bus <service< is arriving in <duration>
+	 -->
+	 <paragraph type="upcoming1">
+		<template id="2" type="upcoming1">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">none</tag>
+				<complement type="none">your bus</complement>
+			</phrase>
+			<phrase type="secondary">
+				<tag required="yes">service</tag>
+				<complement type="verb">is</complement>
+				<complement type="object">arriving</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+	<Greeting>, looks like your ServiceX bus[es] will be leaving at A[, B, C]
+	 -->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">will be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting>, your ServiceX bus is currently expected at A
+	 -->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus is currently expected at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting>, your ServiceX bus is expected in B mins
+	 -->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus is expected in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!--<Greeting>; your ServiceX bus should be leaving on schedule at A.
+-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus should be leaving on schedule at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--<Greeting>; your ServiceX bus should be leaving in Z mins.-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus should be leaving in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> your number X bus this morning|afternoon|evening should be leaving at A.-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus</complement>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> your number X bus this morning|afternoon|evening should be leaving in Z minutes.
+-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus</complement>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+Looks like your bus should be along at A this morning|afternoon|evening-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase>
+				<tag required="yes">serviceTime</tag>
+				<complement type="preposition">Looks like your bus should be along at</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+Looks like your bus should be along in Z mins this morning|afternoon|evening
+!-->
+	<paragraph type="RealTime">
+		<template id="2" type="RealTime">
+			<phrase>
+				<tag required="yes">duration</tag>
+				<complement type="preposition">Looks like your bus should be along in</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!--5 minutes before journey starts!-->
+
+<!--<Greeting>, the next ServiceX bus[es] will be arriving at A[, B, C]
+!-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">will be arriving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> the next #ServiceX is due to leave in Zmins.
+!-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is due to leave in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--<Greeting> The number 3 bus should be arriving at A
+-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">The</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus should be arriving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> The next ServiceX bus is on its way
+-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">The next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">bus is on its way</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> we think your bus is due in about 9 minutes
+-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">we think your bus is due in about</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting>, looks like your bus will be leaving at A-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">looks like your bus will be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> looks like the bus should be with you about 3 minutes-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">looks like the bus should be with you in about</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting> the 3 should be along shortly
+-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">the</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be along shortly</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting> the 3 should be along shortly at A
+-->
+	<paragraph type="RealTime5">
+		<template id="2" type="RealTime5">
+			<phrase priority="high" type="primary">
+				<tag required="yes" type="subject">greeting</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">the</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be along shortly at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!-- END REALTIME JOURNEY TEMPLATES-->
+
+
+<!-- BEGIN QUESTIONNAIRE TEMPLATES-->
+
+<!--Was the information you were provided with accurate? Please score between 1 & 5. 1 is completely wrong and 5 very accurate (adequate content) -->
+	<paragraph type="Questionnaire">
+		<template id="q1" type="Questionnaire">
+			<phrase>
+				<complement type="preposition">Was the information you were provided with accurate? Please score between 1 &amp; 5.1 is completely wrong and 5 very accurate (adequate content)</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--Did you understand the messages sent before your journey? Please score between 1 & 5. 1 is very difficult & 5 very easy to understand (language acceptable)-->
+	<paragraph type="Questionnaire">
+		<template id="q2" type="Questionnaire">
+			<phrase>
+				<complement type="preposition">Did you understand the messages sent before your journey? Please score between 1 &amp; 5. 1 is very difficult &amp; 5 very easy to understand (language acceptable)</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+<!-- END QUESTIONNAIRE TEMPLATES-->
+
+</templates>

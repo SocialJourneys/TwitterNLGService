@@ -23,10 +23,11 @@ public final class Constants {
     public static final String KEY_BUS_SERVICES = "service";
     public static final String KEY_BUS_SERVICES_DIRECTIONS = "bus-services-directions";
     public static final String KEY_PRIMARY_LOCATION = "primaryLocation";
-    public static final String KEY_START_TIME = "startsAtTime";
-    public static final String KEY_END_TIME = "endsAtTime";
+    public static final String KEY_START_TIME = "startsAtDateTime";
+    public static final String KEY_END_TIME = "endsAtDateTime";
     public static final String KEY_DIVERTED_ROADS_PLACES = "place";
     public static final String KEY_DELAY_LENGTH = "delayLength";
+    public static final String KEY_START_END_DATETIME = "startEndDateTime";
 
     public static final String KEY_TIMEOFDAY = "timeOfDay";
     public static final String KEY_TODAYS_TIMEOFDAY = "todaysTimeOfDay";
@@ -50,8 +51,8 @@ public final class Constants {
     public static final String TEMPLATE_PROBLEM_REASON_TAG = "problem";
     public static final String TEMPLATE_SERVICE_DIRECTION_TAG = "service-direction";
     public static final String TEMPLATE_PRIMARY_LOCATION_TAG = "primaryLocation";
-    public static final String TEMPLATE_START_TIME_TAG = "startsAtTime";
-    public static final String TEMPLATE_END_TIME_TAG = "endsAtTime";
+    public static final String TEMPLATE_START_TIME_TAG = "startsAtDateTime";
+    public static final String TEMPLATE_END_TIME_TAG = "endsAtDateTime";
     public static final String TEMPLATE_DIVERTED_ROADS_PLACES_TAG = "divertedRoads";
     public static final String TEMPLATE_DELAY_LENGTH_TAG = "delayLength";
 

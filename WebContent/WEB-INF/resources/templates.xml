@@ -16,17 +16,17 @@
 
 <service> is being diverted (at | ) <primaryLocation> and then (right along | into) < place >
  -->
- 	<template id="0" type="diversion">
-		<phrase priority="high" type="primary">
+ 	<template id="div0" type="diversion1">
+		<phrase type="primary">
 			<tag required="yes" type="subject">service</tag>
 			<complement type="verb">is</complement>
 			<complement type="object">diverted</complement> <!-- is being diverted, are being diverted, will be diverted etc -->
 		</phrase>
-		<phrase priority="medium" type="preposition">
+		<phrase type="preposition">
 			<complement type="preposition">at</complement>
 			<tag required="yes">primaryLocation</tag>
 		</phrase>
-		<phrase priority="low" type="preposition">
+		<phrase type="preposition">
 			<complement type="preposition">and then</complement>
 			<complement type="preposition">right along|into</complement>
 			<tag required="yes">place</tag>
@@ -37,16 +37,102 @@
 	 <service> <primary_location> diversion starts from <startsAtDateTime> until <endsAtDateTime>
 	!-->
 
- 	<template id="0" type="diversion1">
-		<phrase priority="high" type="primary">
+ 	<template id="div1" type="diversion1">
+		<phrase type="primary">
 			<tag required="yes" type="subject">service</tag>
 		</phrase>
-		<phrase priority="medium" type="preposition">
+		<phrase type="preposition">
 			<tag required="yes">primaryLocation</tag>
 		</phrase>
-		<phrase priority="medium" type="preposition">
-			<complement type="preposition">diversion starts</complement>
-			<tag required="yes">startsAtDateTime</tag>
+		<phrase type="secondary">
+			<complement type="subject">diversion</complement>
+			<complement type="verb">start</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes">startEndDateTime</tag>
+		</phrase>
+	</template>
+
+
+
+<!--
+/*
+	 * <service> diversion starts from <startsAtDateTime> until <endsAtDateTime> for <delayLength> only - <location>
+	 */	!-->
+
+ 	<template id="div2" type="diversion1">
+		<phrase type="primary">
+			<tag required="yes" type="subject">service</tag>
+		</phrase>
+		<phrase type="secondary">
+			<complement type="subject">diversion</complement>
+			<complement type="verb">start</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes">startEndDateTime</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">for</complement>
+			<tag required="yes">delayLength</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">only</complement>
+			<tag required="yes">none</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">-</complement>
+			<tag required="yes">primaryLocation</tag>
+		</phrase>
+	</template>
+
+<!--
+/*
+	 <route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road >
+	 */	!-->
+
+ 	<template id="div2" type="diversion1">
+		<phrase type="primary">
+			<tag required="yes" type="subject">service</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">from</complement>
+			<tag required="yes">primaryLocation</tag>
+		</phrase>
+		<phrase type="secondary">
+			<tag required="yes" include="no">service</tag>
+			<complement type="verb">is</complement>
+			<complement type="object">diverted</complement>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">along</complement>
+			<tag required="yes">place</tag>
+		</phrase>
+	</template>
+
+
+
+
+	 <!--
+	  due to <hasFactor> on <primaryLocation> <service> and <service> currently being diverted
+	 	 */	!-->
+
+ 	<template id="div2" type="diversion">
+		<phrase type="preposition">
+			<complement type="preposition">due to</complement>
+			<tag required="yes" type="subject">hasFactor</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">on</complement>
+			<tag required="yes">primaryLocation</tag>
+		</phrase>
+		<phrase type="preposition">
+			<tag required="yes" >service</tag>
+		</phrase>
+		<phrase type="preposition">
+			<complement type="preposition">currently being diverted</complement>
+			<tag required="yes">none</tag>
 		</phrase>
 	</template>
 
@@ -55,7 +141,7 @@
 	<!--
 	<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
 	 -->
-		<phrase priority="high" type="primary">
+		<phrase type="primary">
 			<tag required="yes" type="subject">service-direction</tag>
 			<complement type="verb">is</complement>
 		</phrase>
@@ -80,7 +166,7 @@
 Hi, just to let you know we've heard there are delays 
 up to <7 minutes> <this morning|afternoon|evening> on the <ServiceX>
 	 -->
-		<phrase priority="high" type="primary">
+		<phrase type="primary">
 			<tag required="yes">greeting</tag>
 		</phrase>
 		<phrase type="preposition">
@@ -100,7 +186,7 @@ up to <7 minutes> <this morning|afternoon|evening> on the <ServiceX>
 	<!--
 Hi, just to make you aware there are delays up to <7 minutes> reported <this morning|afternoon|evening> on the <ServiceX>
 	 -->
-		<phrase priority="high" type="primary">
+		<phrase type="primary">
 			<tag required="yes">greeting</tag>
 		</phrase>
 		<phrase type="preposition">
@@ -293,7 +379,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 			<complement type="preposition">looks like your</complement>
 		</phrase>
 		<phrase>
-			<complement type="preposition">will be leavning at</complement>
+			<complement type="preposition">will be leaving at</complement>
 			<tag required="yes">serviceTime</tag>
 		</phrase>
 	</template>

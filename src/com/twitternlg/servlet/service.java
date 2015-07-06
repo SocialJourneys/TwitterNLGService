@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -101,18 +102,49 @@ public class service extends HttpServlet {
 	    //convert json string into hashmap
 	    Map<String, Object> RDFdata = gson.fromJson(body, HashMap.class);
 	    
-	   // TweetFactory t = new TweetFactory();
+	
+	    // TweetFactory t = new TweetFactory();
 	    NLGTemplateProcessor t = new NLGTemplateProcessor();
-    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext());
-    	
-    	//out.println(t.testXPath(request.getServletContext(),RDFdata));
-    	//if(tweets.size()>0)
-    		//out.println(tweets.get(0));
-	    for(String objTweet: tweets){
-    	out.println(objTweet);
-    	out.println("\n");
+	    String ranking = "no";
+	    if(RDFdata.containsKey("ranking"))
+	    	ranking = RDFdata.get("ranking").toString();
+	    
+	    switch (ranking){
+	    case "yes":
+			List<Map<String, Object>> output = t.generateTweetsWithRanking(RDFdata,request.getServletContext(), "yes");
+			/*for (Map<String, Object> obj : output) {
+				String json = new Gson().toJson(foo );
 
-    	}	
+				out.println("\n");
+			}*/
+			String json = new Gson().toJson(output);
+			out.println(json);
+	    	break;
+	    case "no":{
+	    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext(), "no");
+	    	
+	    	//if(tweets.size()>0)
+	    		//out.println(tweets.get(0));
+		    for(String objTweet: tweets){
+		    	out.println(objTweet);
+		    	out.println("\n");
+	    	}
+		    break;
+	    }
+	    	
+	    default:
+	    	ArrayList <String>tweets = t.generateTweetss(RDFdata,request.getServletContext(), "no");
+	    	
+	    	//if(tweets.size()>0)
+	    		//out.println(tweets.get(0));
+		    for(String objTweet: tweets){
+		    	out.println(objTweet);
+		    	out.println("\n");
+	    	}
+	    	break;
+	    }
+	    
+
     	
 	
 	}
