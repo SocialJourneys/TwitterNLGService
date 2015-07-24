@@ -1,0 +1,6 @@
+CREATE TABLE time_log (
+    requester character varying(1024),
+    recipient character varying(1024),
+    "timestamp" timestamp without time zone,
+    message character varying(1024)
+);
