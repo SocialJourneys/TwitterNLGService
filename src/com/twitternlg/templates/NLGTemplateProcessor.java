@@ -213,15 +213,16 @@ public class NLGTemplateProcessor {
 	/*
 	 * ranking algorithm
 	 */
-	private Map<String,Object> doRanking(ArrayList<String> messages){
-		Map<String, Object> output = new HashMap<String, Object>();
+	private Map<String,Object> doRanking(ArrayList<String>messages){
 
-		for(String message: messages){
+/*		for(String message: messages){
 			output.put("message", message);
 			int characterCount = message.length();
 			output.put("characters", characterCount);
 		}
-		return output;
+		return output;*/
+		
+		return null;
 	}
 
 	/*
@@ -1855,10 +1856,11 @@ public class NLGTemplateProcessor {
 					Map<String,Object> obj = new HashMap<String,Object>();
 					obj.put("paragraph", paragraph_string);
 					obj.put("tags_missed", tags_missed);
-					
+					obj.put("characters", paragraph_string.length());
+
 					if(ranking.equals("yes"))
 						output.add(obj);
-					else if(ranking.equals("no") && all_true==true)
+					else if(ranking.equals("no") && all_true==true) //if ranking information is not requested
 						output.add(obj);
 							
 				}

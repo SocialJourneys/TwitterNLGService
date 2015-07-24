@@ -1,6 +1,7 @@
 package com.twitternlg.servlet;
 
 import com.google.gson.Gson;
+import com.twitternlg.database.DatabaseManager;
 import com.twitternlg.nlg.ATweet;
 import com.twitternlg.nlg.TweetFactory;
 import com.twitternlg.templates.NLGTemplateProcessor;
@@ -52,6 +53,10 @@ public class service extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		DatabaseManager.insertLog("r1", "hello");
+		
+		PrintWriter out = response.getWriter();
+		out.println("good");
 	}
     
 	/**

@@ -9,6 +9,20 @@
 	tag - RDFData property. Tag always become the subject in a phrase
 	complement - preposition, verb or object
 	ignore Priority for now.
+
+	{
+"type":"RealTime5",
+"startsAtDateTime":"2014-03-27T17:45:38",
+"endsAtDateTime":"2015-09-27T17:45:38",
+"place":"road1, road2",
+"service":"service1",
+"hasFactor":"road works",
+"delayLength":"10mins",
+"duration":"10mins",
+"primaryLocation":"st machar drive",
+"messageLength":"140"
+}
+
  -->
 <templates>
 <!-- 
@@ -16,7 +30,7 @@
 
 <service> is being diverted (at | ) <primaryLocation> and then (right along | into) < place >
  -->
- 	<paragraph type="paragraph">
+ 	<paragraph type="paragraph" id="0">
  		<template>
 			<phrase type="primary">
 				<tag required="yes" type="subject">service</tag>
@@ -42,7 +56,7 @@
 		</template>
  	</paragraph>
 
- 	<paragraph type="paragraph">
+ 	<paragraph type="paragraph" id="1">
 	 	<template>
 			<phrase type="preposition">
 				<complement type="preposition">due to</complement>
@@ -72,7 +86,7 @@
 <!--
 	 <service> <primary_location> diversion starts from <startsAtDateTime> until <endsAtDateTime>
 	!-->
- 	<paragraph type="diversion1">
+ 	<paragraph type="diversion1" id="2">
 	 	<template id="div1" type="diversion1">
 			<phrase type="primary">
 				<tag required="yes" type="subject">service</tag>
@@ -97,7 +111,7 @@
 /*
 	 * <service> diversion starts from <startsAtDateTime> until <endsAtDateTime> for <delayLength> only - <location>
 	 */	!-->
- 	<paragraph type="diversion1">
+ 	<paragraph type="diversion1" id="3">
 	 	<template id="div2" type="diversion1">
 			<phrase type="primary">
 				<tag required="yes" type="subject">service</tag>
@@ -129,7 +143,7 @@
 /*
 	 <route> <route> <route> from <primary_location> are being diverted along < road >,< road >,< road >,< road > and < road >
 	 */	!-->
- 	<paragraph type="diversion1">
+ 	<paragraph type="diversion1" id="4">
 	 	<template id="div2" type="diversion1">
 			<phrase type="primary">
 				<tag required="yes" type="subject">service</tag>
@@ -155,7 +169,7 @@
 	 <!--
 	  due to <hasFactor> on <primaryLocation> <service> and <service> currently being diverted
 	 	 */	!-->
- 	<paragraph type="diversion">
+ 	<paragraph type="diversion" id="5">
 	 	<template id="div2" type="diversion">
 			<phrase type="preposition">
 				<complement type="preposition">due to</complement>
@@ -176,7 +190,7 @@
  	</paragraph>
 
 
- 	<paragraph type="delay1">
+ 	<paragraph type="delay1" id="6">
 		<template id="1" type="delay1">
 		<!--
 		<service> [<direction>] [and <route>] experiencing [<delay-type>] delays (of|of approx|of approximately|of up to)) <delay-size> mins <number> [<time-interval>] [due to <reason>] 
@@ -203,7 +217,7 @@
  	</paragraph>
 
 
- 	<paragraph type="delay">
+ 	<paragraph type="delay" id="7">
 		<template id="1" type="delay">
 		<!--
 	Hi, just to let you know we've heard there are delays 
@@ -226,7 +240,7 @@
 		</template>
 	</paragraph>
 
- 	<paragraph type="delay">
+ 	<paragraph type="delay" id="8">
 		<template id="1" type="delay">
 		<!--
 	Hi, just to make you aware there are delays up to <7 minutes> reported <this morning|afternoon|evening> on the <ServiceX>
@@ -249,7 +263,7 @@
 		</template>
 	</paragraph>
 
- 	<paragraph type="diversion1">
+ 	<paragraph type="diversion1" id="9">
 		<template id="3" type="diversion1">
 		<!--
 		  delays (of | of up to) <number> mins (to | on) <route> [and [<number>
@@ -269,7 +283,7 @@
 		</template>
  	</paragraph>
 
- 	<paragraph type="diversion1">
+ 	<paragraph type="diversion1" id="10">
 		<template id="4" type="diversion1">
 		<!--
 		 <service> from <primary_location> is/are being diverted along
@@ -298,7 +312,7 @@
 
 	<!--
 		<Greeting>, looks like everything should be fine for your journey this morning|afternoon|evening	-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="11">
 		<template id="ao1" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -315,7 +329,7 @@
 		<Greeting>, we’re not aware of anything that should affect your journey this morning|afternoon|evening
 
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="12">
 		<template id="ao2" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -330,7 +344,7 @@
 	<!--
 		<Greeting>, we’re not aware of anything that should affect you next journey
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="13">
 		<template id="ao3" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -346,7 +360,7 @@
 	<!--
 	<Greeting>, it doesn't look like your journey should experience any delays.
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="14">
 		<template id="ao4" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -361,7 +375,7 @@
 	<!--
 	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="15">
 		<template id="ao5" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -376,7 +390,7 @@
 	<!--
 	<Greeting> we're not aware of anything out of the ordinary that should affect your journey. Please let us know if you see anything
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="16">
 		<template id="ao5" type="all_ok">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -391,7 +405,7 @@
 	<!--
 We’re not aware of any delays on your route this morning|afternoon|evening.
 			-->
-	<paragraph type="all_ok">
+	<paragraph type="all_ok" id="17">
 		<template id="ao5" type="all_ok">
 			<phrase>
 				<complement type="none">We're not aware of any delays on your route</complement>
@@ -412,7 +426,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 	<!--
 		<greeting>, your bus <service< is arriving in <duration>
 	 -->
-	 <paragraph type="upcoming1">
+	 <paragraph type="upcoming1" id="18">
 		<template id="2" type="upcoming1">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -436,7 +450,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 	<!--
 	<Greeting>, looks like your ServiceX bus[es] will be leaving at A[, B, C]
 	 -->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="19">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -455,7 +469,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 	<!--
 <Greeting>, your ServiceX bus is currently expected at A
 	 -->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="20">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -474,7 +488,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 	<!--
 <Greeting>, your ServiceX bus is expected in B mins
 	 -->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="21">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -494,7 +508,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 
 <!--<Greeting>; your ServiceX bus should be leaving on schedule at A.
 -->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="22">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -510,8 +524,13 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 		</template>
 	</paragraph>
 
+
+<!--Paul <Greeting>; your bus Service 1 should be leaving in Z mins.-->
+<!--Paul <Greeting>; your bus Service 1 should be leaving in Z mins.-->
+<!--Paul  <Greeting> your bus Service 1 running this morning|afternoon|evening should be leaving at A.-->
+
 <!--<Greeting>; your ServiceX bus should be leaving in Z mins.-->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="23">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag> <!--Hi, Good Afternoon etc-->
@@ -529,7 +548,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 
 <!--
 <Greeting> your number X bus this morning|afternoon|evening should be leaving at A.-->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="24">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -552,7 +571,7 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 <!--
 <Greeting> your number X bus this morning|afternoon|evening should be leaving in Z minutes.
 -->
-	<paragraph type="RealTime">
+	<paragraph type="RealTime" id="25">
 		<template id="2" type="RealTime">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -574,7 +593,9 @@ We’re not aware of any delays on your route this morning|afternoon|evening.
 
 <!--
 Looks like your bus should be along at A this morning|afternoon|evening-->
-	<paragraph type="RealTime">
+<!-- Paul Looks like your bus service 1 should be along at A this morning|afternoon|evening-->
+
+	<paragraph type="RealTime" id="26">
 		<template id="2" type="RealTime">
 			<phrase>
 				<tag required="yes">serviceTime</tag>
@@ -589,7 +610,10 @@ Looks like your bus should be along at A this morning|afternoon|evening-->
 <!--
 Looks like your bus should be along in Z mins this morning|afternoon|evening
 !-->
-	<paragraph type="RealTime">
+
+<!-- Paul Looks like your bus service 1 should be along in Z mins this morning|afternoon|evening -->
+
+	<paragraph type="RealTime" id="27">
 		<template id="2" type="RealTime">
 			<phrase>
 				<tag required="yes">duration</tag>
@@ -607,7 +631,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 
 <!--<Greeting>, the next ServiceX bus[es] will be arriving at A[, B, C]
 !-->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="28">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -626,7 +650,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!--
 <Greeting> the next #ServiceX is due to leave in Zmins.
 !-->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="29">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -644,7 +668,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 
 <!--<Greeting> The number 3 bus should be arriving at A
 -->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="30">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -663,7 +687,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!--
 <Greeting> The next ServiceX bus is on its way
 -->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="31">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -682,7 +706,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!--
 <Greeting> we think your bus is due in about 9 minutes
 -->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="32">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -696,7 +720,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 
 <!--
 <Greeting>, looks like your bus will be leaving at A-->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="33">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -710,7 +734,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 
 <!--
 <Greeting> looks like the bus should be with you about 3 minutes-->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="34">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -725,7 +749,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 	<!--
 <Greeting> the 3 should be along shortly
 -->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="35">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -744,7 +768,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 	<!--
 <Greeting> the 3 should be along shortly at A
 -->
-	<paragraph type="RealTime5">
+	<paragraph type="RealTime5" id="36">
 		<template id="2" type="RealTime5">
 			<phrase priority="high" type="primary">
 				<tag required="yes" type="subject">greeting</tag>
@@ -766,7 +790,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!-- BEGIN QUESTIONNAIRE TEMPLATES-->
 
 <!--Was the information you were provided with accurate? Please score between 1 & 5. 1 is completely wrong and 5 very accurate (adequate content) -->
-	<paragraph type="Questionnaire">
+	<paragraph type="Questionnaire" id="37">
 		<template id="q1" type="Questionnaire">
 			<phrase>
 				<complement type="preposition">Was the information you were provided with accurate? Please score between 1 &amp; 5.1 is completely wrong and 5 very accurate (adequate content)</complement>
@@ -776,7 +800,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 	</paragraph>
 
 <!--Did you understand the messages sent before your journey? Please score between 1 & 5. 1 is very difficult & 5 very easy to understand (language acceptable)-->
-	<paragraph type="Questionnaire">
+	<paragraph type="Questionnaire" id="38">
 		<template id="q2" type="Questionnaire">
 			<phrase>
 				<complement type="preposition">Did you understand the messages sent before your journey? Please score between 1 &amp; 5. 1 is very difficult &amp; 5 very easy to understand (language acceptable)</complement>
