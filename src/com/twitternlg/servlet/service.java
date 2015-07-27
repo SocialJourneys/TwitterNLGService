@@ -53,10 +53,6 @@ public class service extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		DatabaseManager.insertLog("r1", "hello");
-		
-		PrintWriter out = response.getWriter();
-		out.println("good");
 	}
     
 	/**
@@ -132,7 +128,7 @@ public class service extends HttpServlet {
 	    		//out.println(tweets.get(0));
 		    for(String objTweet: tweets){
 		    	out.println(objTweet);
-		    	out.println("\n");
+		    	//out.println("\n");
 	    	}
 		    break;
 	    }
@@ -144,7 +140,7 @@ public class service extends HttpServlet {
 	    		//out.println(tweets.get(0));
 		    for(String objTweet: tweets){
 		    	out.println(objTweet);
-		    	out.println("\n");
+		    	//out.println("\n");
 	    	}
 	    	break;
 	    }

@@ -1,0 +1,372 @@
+<?xml version="1.0"?>
+<templates>	
+<!--
+	<Greeting>, looks like your ServiceX bus[es] will be leaving at A[, B, C]
+	 -->
+	<paragraph type="RealTime" id="19">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">will be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting>, your ServiceX bus is currently expected at A
+	 -->
+	<paragraph type="RealTime" id="20">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is currently expected at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting>, your ServiceX bus is expected in B mins
+	 -->
+	<paragraph type="RealTime" id="21">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is expected in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!--<Greeting>; your ServiceX bus should be leaving on schedule at A.
+-->
+	<!--paragraph type="RealTime" id="22">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving on schedule at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph-->
+
+
+<!--Paul <Greeting>; your bus Service 1 should be leaving in Z mins.-->
+<!--Paul <Greeting>; your bus Service 1 should be leaving in Z mins.-->
+<!--Paul  <Greeting> your bus Service 1 running this morning|afternoon|evening should be leaving at A.-->
+
+<!--<Greeting>; your ServiceX bus should be leaving in Z mins.-->
+	<paragraph type="RealTime" id="23">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> your number X bus this morning|afternoon|evening should be leaving at A.-->
+	<paragraph type="RealTime" id="24">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> your number X bus this morning|afternoon|evening should be leaving in Z minutes.
+-->
+	<paragraph type="RealTime" id="25">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be leaving in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+Looks like your bus should be along at A this morning|afternoon|evening-->
+<!-- Paul Looks like your bus service 1 should be along at A this morning|afternoon|evening-->
+
+	<paragraph type="RealTime" id="26">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like your</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">serviceTime</tag>
+				<complement type="preposition">should be along at</complement>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+Looks like your bus should be along in Z mins this morning|afternoon|evening
+!-->
+
+<!-- Paul Looks like your bus service 1 should be along in Z mins this morning|afternoon|evening -->
+
+	<paragraph type="RealTime" id="27">
+		<template id="2" type="RealTime">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like your</complement>
+			</phrase>
+			<phrase>
+				<tag required="yes">duration</tag>
+				<complement type="preposition">should be along in</complement>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!--5 minutes before journey starts!-->
+
+<!--<Greeting>, the next ServiceX bus[es] will be arriving at A[, B, C]
+!-->
+	<paragraph type="RealTime5" id="28">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">will be arriving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> the next #ServiceX is due to leave in Zmins.
+!-->
+	<paragraph type="RealTime5" id="29">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is due to leave in</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--<Greeting> The number 3 bus should be arriving at A
+-->
+	<paragraph type="RealTime5" id="30">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be arriving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> The next ServiceX bus is on its way
+-->
+	<paragraph type="RealTime5" id="31">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">the next</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is on its way</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> we think your bus is due in about 9 minutes
+-->
+	<paragraph type="RealTime5" id="32">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">we think your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">is due in about</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting>, looks like your bus will be leaving at A-->
+	<paragraph type="RealTime5" id="33">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like your</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">will be leaving at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!--
+<Greeting> looks like the bus should be with you about 3 minutes-->
+	<paragraph type="RealTime5" id="34">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">service</tag>
+				<complement type="preposition">looks like the</complement>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be with you in about</complement>
+				<tag required="yes">duration</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting> the 3 should be along shortly
+-->
+	<paragraph type="RealTime5" id="35">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">the</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be along shortly</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+<Greeting> the 3 should be along shortly at A
+-->
+	<paragraph type="RealTime5" id="36">
+		<template id="2" type="RealTime5">
+			<phrase>
+				<complement type="preposition">and</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">the</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">should be along shortly at</complement>
+				<tag required="yes">serviceTime</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+<!-- END REALTIME JOURNEY TEMPLATES-->
+
+</templates>

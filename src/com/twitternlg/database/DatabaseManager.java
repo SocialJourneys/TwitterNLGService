@@ -3,10 +3,13 @@ package com.twitternlg.database;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DatabaseManager {
@@ -24,7 +27,10 @@ public class DatabaseManager {
 	private static Statement statement=null;
 	
 	private static DatabaseManager instance = null;
+	
+	private static Map<String,Object> time_log = new HashMap<String,Object>();
 
+	
 	protected DatabaseManager() {
 		  // Exists only to defeat instantiation.
 	}
@@ -33,7 +39,7 @@ public class DatabaseManager {
 	public static DatabaseManager getInstance() {
 		if(instance == null) {
 			instance = new DatabaseManager();
-			}
+		}
 		return instance;
 		}
 	
@@ -41,6 +47,36 @@ public class DatabaseManager {
 	    return new Date(date.getTime());
 	}
 	
+	
+	/*
+	 * hashmap storage
+	 */
+	public static void insertLogHash(String recipient){
+		time_log.put(recipient, new java.util.Date());
+	}
+	
+	//returns true if the threshold is met
+	public static boolean isWithinTimeThreshold(String recipient, long threshold){
+		System.out.println("timelog "+time_log);
+
+		boolean isTrue = false;
+		
+		if(time_log.containsKey(recipient)){
+			java.util.Date curr = new java.util.Date();
+			java.util.Date log_date = (java.util.Date) time_log.get(recipient);
+			long seconds = (curr.getTime()-log_date.getTime())/1000;
+			System.out.println("seconds: "+seconds);
+			
+			if(seconds<=threshold)
+				isTrue = true;
+		}
+		insertLogHash(recipient);
+		
+		return isTrue;
+	}		
+	
+	
+	 
 	private static java.sql.Timestamp getCurrentTimestamp(){
 		java.util.Date today = new java.util.Date();
 	    	return new java.sql.Timestamp(today.getTime());
@@ -68,10 +104,47 @@ public class DatabaseManager {
 	public static void insertLog(String recipient, String message){
 		
 		Timestamp timestamp= getCurrentTimestamp();
+		PreparedStatement preparedStatement = null;
+
+		//String query = "INSERT INTO time_log (recipient, message, timestamp) VALUES('"+recipient+"','"+message+"','"+timestamp+"')";
 		
-		String query = "INSERT INTO time_log (recipient, message, timestamp) VALUES('"+recipient+"','"+message+"','"+timestamp+"')";
+		String query = "INSERT INTO time_log (recipient, message, timestamp) VALUES(?,?,?)";
 		
-		DBInsert(query);
+		
+		//DBInsert(query);
+		
+		try {
+			if(dbConnection==null || dbConnection.isClosed())
+				dbConnection = getDBConnection();
+			
+			if(preparedStatement==null || preparedStatement.isClosed())
+				preparedStatement = dbConnection.prepareStatement(query);
+ 
+			preparedStatement.setString(1, recipient);
+			preparedStatement.setString(2, message);
+			preparedStatement.setTimestamp(3, timestamp);
+
+			//System.out.println(query);
+ 
+			// execute insert SQL stetement
+//			results = statement.executeQuery(query);
+			preparedStatement.executeUpdate();
+
+			System.out.println("Record is inserted into Log table!");
+			
+			if (preparedStatement != null) {
+				preparedStatement.close();
+			}
+ 
+			if (dbConnection != null) {
+				dbConnection.close();
+			}
+ 
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed for query: "+query);
+ 
+		}
 		
 	}
 	

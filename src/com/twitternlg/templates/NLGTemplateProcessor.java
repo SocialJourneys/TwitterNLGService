@@ -25,6 +25,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.twitternlg.database.DatabaseManager;
+
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.framework.CoordinatedPhraseElement;
@@ -70,20 +72,22 @@ import static com.twitternlg.nlg.Constants.TEMPLATE_START_TIME_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_END_TIME_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_DIVERTED_ROADS_PLACES_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_DELAY_LENGTH_TAG;
+import static com.twitternlg.nlg.Constants.NLG_MESSAGE_TIME_THRESHOLD;
 
 public class NLGTemplateProcessor {
 	// core variables
 	private Lexicon lexicon = null;
 	private NLGFactory nlgFactory = null;
 	private Realiser realiser = null;
-
+	private ServletContext server_context = null;
+	
 	public NLGTemplateProcessor() {
 
 		// initialize core variables
 		lexicon = Lexicon.getDefaultLexicon();
 		nlgFactory = new NLGFactory(lexicon);
 		realiser = new Realiser(lexicon);
-
+		
 		// Map <String,Object> RDFdata = createRDFData();
 
 		// SPhraseSpec tweet = generateTweet((Map
@@ -733,18 +737,33 @@ public class NLGTemplateProcessor {
 
 		CoordinatedPhraseElement greeting = nlgFactory.createCoordinatedPhrase();
 
-		//create the list of greetings
-		ArrayList<String> greetings = new ArrayList<String>(Arrays.asList(
-				"Hi,","Hello,","Hello sir/madam,","Hey m8,","Greetings traveller,","Hola,","Ciao,","Relax my friend,"));
+		ArrayList<String> greetings_arr = new ArrayList<String>();
+		try{
+			Document doc = loadXML(server_context,"greetings.xml");
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xpath = xPathfactory.newXPath();
+	
+			NodeList greetings_nodes = (NodeList) xpath.evaluate("/greetings/greeting",doc, XPathConstants.NODESET);
 
-		greetings.add("Good"+todays_timeOfDay_string);
+			for(int a = 0; a < greetings_nodes.getLength(); a++){
+				Element greeting_element = (Element) greetings_nodes.item(a);
+				String greeting_node_value = greeting_element.getTextContent();
+				greetings_arr.add(greeting_node_value);
+			}
+		}
+		catch(Exception e){
+			System.out.println("greetings crashed");
+			e.printStackTrace();
+		}
+		
+		//greetings_arr.add("Good"+todays_timeOfDay_string);
 
 		if(calculateTimeOfTheDay(null).get("day").equals("Friday"))
-			greetings.add("Happy Friday!");
+			greetings_arr.add("Happy Friday!");
 
 		//pickup a random greeting message
-		int index = getRandomIndex(greetings.size());
-		greeting_string=greetings.get(index);
+		int index = getRandomIndex(greetings_arr.size());
+		greeting_string=greetings_arr.get(index);
 
 		//generate the NLG phrase
 		NPPhraseSpec greeting_obj = nlgFactory.createNounPhrase(greeting_string);
@@ -1613,12 +1632,15 @@ public class NLGTemplateProcessor {
 		return tweet;
 	}
 
-	private Document loadXML(ServletContext context){
+	private Document loadXML(ServletContext context,String filename){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
-		String fullPath = context.getRealPath("/WEB-INF/resources/templates-para.xml");
+		//String folderLocation = "/WEB-INF/resources/";
+		String folderLocation = "http://sj.abdn.ac.uk/NLG/";
+
+		String fullPath = context.getRealPath(folderLocation+filename);
 		//String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
-		//String fullPath = "http://sj.abdn.ac.uk/NLG/templates.xml";
+		//String fullPath = "http://sj.abdn.ac.uk/NLG/"+filename;
 
 		Document doc = null;
 		try {
@@ -1636,21 +1658,19 @@ public class NLGTemplateProcessor {
 	public List<Map<String, Object>> processXMLTemplates(ServletContext context, Map<String,Object>RDFData, String ranking){
 
 		SPhraseSpec tweet = null;
-
+		this.server_context = context;
+		
 		List<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
-
-
 		ArrayList<String> outputArray = new ArrayList<String>();
 
-		Document doc = loadXML(context);
-		XPathFactory xPathfactory = XPathFactory.newInstance();
-		XPath xpath = xPathfactory.newXPath();
 
 		String templateEvent = null;
 		String paragraphType = "";
 
 		if(RDFData.containsKey(KEY_EVENT_TYPE))
 			paragraphType=RDFData.get(KEY_EVENT_TYPE).toString();
+
+		String filename = "templates-para.xml";
 
 
 		switch (paragraphType){
@@ -1677,7 +1697,18 @@ public class NLGTemplateProcessor {
 			break;
 		}
 
+		
+		if(RDFData.containsKey("recipient")){
+			if(DatabaseManager.isWithinTimeThreshold(RDFData.get("recipient").toString(), NLG_MESSAGE_TIME_THRESHOLD)
+					&& (paragraphType.equals(KEY_EVENT_REAL_TIME) || paragraphType.equals(KEY_EVENT_REAL_TIME5)))
+				filename = "templates-para-connecting.xml"; 
+		}
 
+		Document doc = loadXML(context,filename);
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+
+		
 		try{
 
 			//XPathExpression expr = xpath.compile("/templates/template[@id='0']/phrase/tag/text()");
@@ -1851,6 +1882,7 @@ public class NLGTemplateProcessor {
 
 				try{
 					paragraph_string = paragraph_string + realiser.realiseSentence(tweet);
+					//paragraph_string.trim();
 					
 					System.out.println("paragraph_stringL:" + paragraph_string);
 					Map<String,Object> obj = new HashMap<String,Object>();

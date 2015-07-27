@@ -55,5 +55,8 @@ public final class Constants {
     public static final String TEMPLATE_END_TIME_TAG = "endsAtDateTime";
     public static final String TEMPLATE_DIVERTED_ROADS_PLACES_TAG = "divertedRoads";
     public static final String TEMPLATE_DELAY_LENGTH_TAG = "delayLength";
+    
+    public static final long NLG_MESSAGE_TIME_THRESHOLD = 60l;
+
 
 }
