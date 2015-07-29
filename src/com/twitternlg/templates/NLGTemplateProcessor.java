@@ -73,7 +73,8 @@ import static com.twitternlg.nlg.Constants.TEMPLATE_END_TIME_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_DIVERTED_ROADS_PLACES_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_DELAY_LENGTH_TAG;
 import static com.twitternlg.nlg.Constants.NLG_MESSAGE_TIME_THRESHOLD;
-
+import static com.twitternlg.nlg.Constants.KEY_CERTAINTY;
+import static com.twitternlg.nlg.Constants.KEY_EVENT_GENERAL_DISRUPTION;
 public class NLGTemplateProcessor {
 	// core variables
 	private Lexicon lexicon = null;
@@ -1636,11 +1637,11 @@ public class NLGTemplateProcessor {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		//String folderLocation = "/WEB-INF/resources/";
-		String folderLocation = "http://sj.abdn.ac.uk/NLG/";
+		//String folderLocation = "http://sj.abdn.ac.uk/NLG/";
 
-		String fullPath = context.getRealPath(folderLocation+filename);
+		//String fullPath = context.getRealPath(folderLocation+filename);
 		//String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
-		//String fullPath = "http://sj.abdn.ac.uk/NLG/"+filename;
+		String fullPath = "http://sj.abdn.ac.uk/NLG/"+filename;
 
 		Document doc = null;
 		try {
@@ -1692,11 +1693,15 @@ public class NLGTemplateProcessor {
 		case KEY_EVENT_QUESTIONNAIRE:
 			paragraphType = KEY_EVENT_QUESTIONNAIRE;
 			break;
+		case KEY_EVENT_GENERAL_DISRUPTION:
+			paragraphType = KEY_EVENT_GENERAL_DISRUPTION;
+			break;
 		default:
 			paragraphType = "paragraph";
 			break;
 		}
-
+		
+		//check timelog condition for Realtime and Realtime5
 		
 		if(RDFData.containsKey("recipient")){
 			if(DatabaseManager.isWithinTimeThreshold(RDFData.get("recipient").toString(), NLG_MESSAGE_TIME_THRESHOLD)
@@ -1830,6 +1835,9 @@ public class NLGTemplateProcessor {
 									//part_phrase_pp.setPreposition(RDFComplementValue);
 									// System.out.println("preposition: " + preposition_string);
 									break;
+								case "certainty":
+									preposition_string +=" "+ selectionCertaintyTerm(complementValue,RDFData);
+									break;
 								case "none":
 									preposition_string +=" "+ selectionPreposition(complementValue);
 									//part_phrase_pp.setPreposition(RDFComplementValue);
@@ -1930,6 +1938,32 @@ public class NLGTemplateProcessor {
 	}
 
 	/*
+	 * select certainty term based on certainty value
+	 */
+	private String selectionCertaintyTerm(String terms_string,Map<String,Object>RDFData){
+		
+		float certainty_value =  Float.parseFloat(RDFData.get("certainty").toString());
+		
+		List<String> terms_list = new ArrayList<String>();
+		int index=0;
+
+		if (terms_string!=null && terms_string.length()>0)
+			terms_list.addAll(Arrays.asList(terms_string.split("\\|")));
+
+		if(certainty_value>=0 && certainty_value <=0.3)
+			index=0;
+		if(certainty_value>=0.31 && certainty_value <=0.5)
+			index=1;
+		if(certainty_value>=0.51 && certainty_value <=0.7)
+			index=2;
+		if(certainty_value>=0.71)
+			index=3;
+		
+		System.out.println("hererererer"+terms_list.get(index));
+		return terms_list.get(index);
+	}
+	
+	/*
 	 * extractdata for SPPhrase
 	 */
 	private CoordinatedPhraseElement extractPhraseTagSP(String tag, Map<String,Object>RDFData){
@@ -2027,9 +2061,10 @@ public class NLGTemplateProcessor {
 				//System.out.println("KEY_TODAYS_TIMEOFDAY "+ timeOfDay);
 				PPPhraseSpec timeOfDay_phrase = generateProblemReasonPhrase(timeOfDay);
 				element = timeOfDay_phrase;
-
 				break;
-
+			case KEY_CERTAINTY:	
+				element = nlgFactory.createPrepositionPhrase();
+				break;	
 				/*case KEY_TIMEOFDAY:	
 				String timeOfDay = (String) RDFData.get(KEY_TIMEOFDAY);
 				PPPhraseSpec timeOfDay_phrase = generateProblemReasonPhrase(timeOfDay);

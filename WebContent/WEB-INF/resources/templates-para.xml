@@ -824,4 +824,58 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 	</paragraph>
 <!-- END QUESTIONNAIRE TEMPLATES-->
 
+
+<!-- GENERAL DISRUPTION TEMPLATES-->
+
+	<!--
+Your journey <EventProbablity> effected due to <hasFactor> <timeOfDay>
+-->
+	<paragraph type="GeneralDisruption" id="39">
+		<template type="GeneralDisruption">
+			<phrase>
+				<complement type="preposition">Your journey</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<complement type="certainty">has a chance to|might|most likely|will</complement>
+				<tag required="yes">certainty</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">be effected due to</complement>
+				<tag required="yes">hasFactor</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+	<!--
+There <EventProbablity>delay on your bus <service> <timeOfday> 
+-->
+	<paragraph type="GeneralDisruption" id="40">
+		<template type="GeneralDisruption">
+			<phrase>
+				<complement type="preposition">There</complement>
+				<tag required="yes">none</tag>
+			</phrase>
+			<phrase>
+				<complement type="certainty">is a chance of|might be a|is most likely a|will be a</complement>
+				<tag required="yes">certainty</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">delay on your bus</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+
+
+<!-- GENERAL DISRUPTION TEMPLATES-->
+
 </templates>
