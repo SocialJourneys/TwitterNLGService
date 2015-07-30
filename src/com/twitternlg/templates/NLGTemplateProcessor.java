@@ -1872,6 +1872,7 @@ public class NLGTemplateProcessor {
 							else if(part_phrase_pp!=null)
 								tweet.addPostModifier(part_phrase_pp);
 							else {
+								System.out.println("falssse");
 								all_true=false;
 								tags_missed++;
 							}
@@ -1900,7 +1901,7 @@ public class NLGTemplateProcessor {
 
 					if(ranking.equals("yes"))
 						output.add(obj);
-					else if(ranking.equals("no") && all_true==true) //if ranking information is not requested
+					else if(ranking.equals("no") && all_true) //if ranking information is not requested
 						output.add(obj);
 							
 				}

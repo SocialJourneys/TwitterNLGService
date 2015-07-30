@@ -681,10 +681,10 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 			</phrase>
 			<phrase>
 				<tag required="yes">service</tag>
-				<complement type="preposition">The</complement>
+				<complement type="preposition">the bus</complement>
 			</phrase>
 			<phrase>
-				<complement type="preposition">bus should be arriving at</complement>
+				<complement type="preposition">should be arriving at</complement>
 				<tag required="yes">serviceTime</tag>
 			</phrase>
 		</template>
@@ -700,10 +700,10 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 			</phrase>
 			<phrase>
 				<tag required="yes">service</tag>
-				<complement type="preposition">The next</complement>
+				<complement type="preposition">the next bus</complement>
 			</phrase>
 			<phrase>
-				<complement type="preposition">bus is on its way</complement>
+				<complement type="preposition">is on its way</complement>
 				<tag required="yes">none</tag>
 			</phrase>
 		</template>
@@ -828,7 +828,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!-- GENERAL DISRUPTION TEMPLATES-->
 
 	<!--
-Your journey <EventProbablity> effected due to <hasFactor> <timeOfDay>
+Your journey <EventProbablity> affected due to <hasFactor> <timeOfDay>
 -->
 	<paragraph type="GeneralDisruption" id="39">
 		<template type="GeneralDisruption">
@@ -837,11 +837,15 @@ Your journey <EventProbablity> effected due to <hasFactor> <timeOfDay>
 				<tag required="yes">none</tag>
 			</phrase>
 			<phrase>
-				<complement type="certainty">has a chance to|might|most likely|will</complement>
+				<complement type="preposition">on</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<complement type="certainty">has a chance to|might|will most likely|will</complement>
 				<tag required="yes">certainty</tag>
 			</phrase>
 			<phrase>
-				<complement type="preposition">be effected due to</complement>
+				<complement type="preposition">be affected due to</complement>
 				<tag required="yes">hasFactor</tag>
 			</phrase>
 			<phrase>
@@ -852,9 +856,31 @@ Your journey <EventProbablity> effected due to <hasFactor> <timeOfDay>
 
 
 	<!--
-There <EventProbablity>delay on your bus <service> <timeOfday> 
+<event> <EventProbability> affect your journey on <service> <timeofday>
 -->
 	<paragraph type="GeneralDisruption" id="40">
+		<template type="GeneralDisruption">
+			<phrase>
+				<tag required="yes">hasFactor</tag>
+			</phrase>
+			<phrase>
+				<complement type="certainty">could|might|are likely to|will</complement>
+				<tag required="yes">certainty</tag>
+			</phrase>
+			<phrase>
+				<complement type="preposition">affect your journey on</complement>
+				<tag required="yes">service</tag>
+			</phrase>
+			<phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase>
+		</template>
+	</paragraph>
+
+	<!--
+There <EventProbablity>delay on your bus <service> <timeOfday> 
+-->
+	<paragraph type="GeneralDisruption1" id="41">
 		<template type="GeneralDisruption">
 			<phrase>
 				<complement type="preposition">There</complement>
