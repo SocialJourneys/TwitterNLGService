@@ -200,14 +200,13 @@
 				<complement type="verb">is</complement>
 			</phrase>
 			<phrase>
-				<tag required="yes">none</tag>
-				<complement type="none">experiencing</complement>
-				<complement type="none">delays</complement>
+				<tag required="no">none</tag>
+				<complement type="preposition">experiencing delays</complement>
 				<!--  tag required="no">delay-type</tag --> <!-- slight, minor, major -->
 			</phrase>
 			<phrase>
 				<complement type="preposition">of|of approx|of upto|of approximately</complement>
-				<tag required="yes">delayLength</tag>
+				<tag required="no">delayLength</tag>
 			</phrase>
 			<phrase>
 				<complement type="preposition">due to</complement>
@@ -226,13 +225,17 @@
 			<phrase type="primary">
 				<tag required="yes">greeting</tag>
 			</phrase>
-			<phrase type="preposition">
-				<tag required="yes">delayLength</tag>
-				<complement type="preposition">just to let you know we've heard there are delays up to</complement>
+			<phrase>
+				<tag required="no">none</tag>
+				<complement type="preposition">just to let you know we've heard there are delays</complement>
 			</phrase>
 			<phrase>
-				<tag required="yes">todaysTimeOfDay</tag>
+				<tag required="no">delayLength</tag>
+				<complement type="preposition">of up to</complement>
 			</phrase>
+			<!--phrase>
+				<tag required="yes">todaysTimeOfDay</tag>
+			</phrase-->
 			<phrase>
 				<tag required="yes">service</tag>
 				<complement type="preposition">on the</complement>
@@ -248,14 +251,17 @@
 			<phrase type="primary">
 				<tag required="yes">greeting</tag>
 			</phrase>
-			<phrase type="preposition">
-				<tag required="yes">delayLength</tag>
-				<complement type="preposition">just to make you aware there are delays up to</complement>
+			<phrase>
+				<tag required="no">none</tag>
+				<complement type="preposition">just to make you aware there are delays</complement>
 			</phrase>
-			<phrase type="preposition">
+			<phrase>
+				<tag required="no">delayLength</tag>
+				<complement type="preposition">of up to</complement>
+			</phrase>
+			<!--phrase type="preposition">
 				<tag required="yes">todaysTimeOfDay</tag>
-				<complement type="preposition">reported</complement>
-			</phrase>
+			</phrase-->
 			<phrase>
 				<tag required="yes">service</tag>
 				<complement type="preposition">on the</complement>
@@ -272,7 +278,7 @@
 			<phrase type="primary">
 				<complement type="noun">delays</complement>
 			</phrase>
-			<phrase type="preposition">
+			<phrase>
 				<complement type="preposition">of|of upto|</complement>
 				<tag required="yes">delayLength</tag>
 			</phrase>
@@ -597,7 +603,7 @@ Looks like your bus should be along at A this morning|afternoon|evening-->
 		<template id="2" type="RealTime">
 			<phrase>
 				<tag required="yes">service</tag>
-				<complement type="preposition">Looks like your bus</complement>
+				<complement type="preposition">looks like your bus</complement>
 			</phrase>
 			<phrase>
 				<tag required="yes">serviceTime</tag>
@@ -619,7 +625,7 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 		<template id="2" type="RealTime">
 			<phrase>
 				<tag required="yes">service</tag>
-				<complement type="preposition">Looks like your bus</complement>
+				<complement type="preposition">looks like your bus</complement>
 			</phrase>
 			<phrase>
 				<tag required="yes">duration</tag>
@@ -828,12 +834,12 @@ Looks like your bus should be along in Z mins this morning|afternoon|evening
 <!-- GENERAL DISRUPTION TEMPLATES-->
 
 	<!--
-Your journey <EventProbablity> affected due to <hasFactor> <timeOfDay>
+Your journey on <service> <EventProbablity> be affected due to <hasFactor> <timeOfDay>
 -->
 	<paragraph type="GeneralDisruption" id="39">
 		<template type="GeneralDisruption">
 			<phrase>
-				<complement type="preposition">Your journey</complement>
+				<complement type="preposition">your journey</complement>
 				<tag required="yes">none</tag>
 			</phrase>
 			<phrase>
@@ -847,9 +853,6 @@ Your journey <EventProbablity> affected due to <hasFactor> <timeOfDay>
 			<phrase>
 				<complement type="preposition">be affected due to</complement>
 				<tag required="yes">hasFactor</tag>
-			</phrase>
-			<phrase>
-				<tag required="yes">todaysTimeOfDay</tag>
 			</phrase>
 		</template>
 	</paragraph>
@@ -871,9 +874,6 @@ Your journey <EventProbablity> affected due to <hasFactor> <timeOfDay>
 				<complement type="preposition">affect your journey on</complement>
 				<tag required="yes">service</tag>
 			</phrase>
-			<phrase>
-				<tag required="yes">todaysTimeOfDay</tag>
-			</phrase>
 		</template>
 	</paragraph>
 
@@ -883,7 +883,7 @@ There <EventProbablity>delay on your bus <service> <timeOfday>
 	<paragraph type="GeneralDisruption1" id="41">
 		<template type="GeneralDisruption">
 			<phrase>
-				<complement type="preposition">There</complement>
+				<complement type="preposition">there</complement>
 				<tag required="yes">none</tag>
 			</phrase>
 			<phrase>
@@ -894,9 +894,9 @@ There <EventProbablity>delay on your bus <service> <timeOfday>
 				<complement type="preposition">delay on your bus</complement>
 				<tag required="yes">service</tag>
 			</phrase>
-			<phrase>
+			<!--phrase>
 				<tag required="yes">todaysTimeOfDay</tag>
-			</phrase>
+			</phrase-->
 		</template>
 	</paragraph>
 

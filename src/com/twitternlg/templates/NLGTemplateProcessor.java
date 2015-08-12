@@ -61,6 +61,7 @@ import static com.twitternlg.nlg.Constants.KEYWORD_DIVERSION;
 import static com.twitternlg.nlg.Constants.KEYWORD_DELAY;
 import static com.twitternlg.nlg.Constants.KEY_GREETING;
 import static com.twitternlg.nlg.Constants.KEY_TIMEOFDAY;
+import static com.twitternlg.nlg.Constants.KEY_REPORTED_AT;
 import static com.twitternlg.nlg.Constants.KEY_TODAYS_TIMEOFDAY;
 import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DIVERSION_TAG;
 import static com.twitternlg.nlg.Constants.TEMPLATE_EVENT_DELAY_TAG;
@@ -253,66 +254,6 @@ public class NLGTemplateProcessor {
 
 		return tweets;
 
-	}
-
-	private SPhraseSpec generateDiversionTweet2(Map<String, Object> RDFdata) {
-
-		/*
-		 * Assumption: Every tweet will have two parts - info about the bus and
-		 * place, info about the problem and date
-		 * 
-		 * create the first part
-		 */
-
-		SPhraseSpec tweet = nlgFactory.createClause();
-		// add bus info
-		ArrayList<String> bus_services = (ArrayList<String>) RDFdata
-				.get("service");
-		CoordinatedPhraseElement buses = nlgFactory.createCoordinatedPhrase();
-		for (String bus : bus_services) {
-			NPPhraseSpec bus_obj = nlgFactory.createNounPhrase(bus);
-			buses.addCoordinate(bus_obj);
-		}
-
-		tweet.setSubject(buses);
-
-		tweet.setObject(RDFdata.get(KEYWORD_DIVERSION).toString());
-		// p.setVerb("effect"); //minimizing the characters by dropping out the
-		// verb
-
-		// add the location info
-		NPPhraseSpec place = nlgFactory.createNounPhrase(RDFdata.get(
-				"place").toString());
-		PPPhraseSpec pp = nlgFactory.createPrepositionPhrase();
-		pp.addComplement(place);
-		pp.setPreposition("at");
-
-		tweet.addComplement(pp);
-
-		/*
-		 * 
-		 * create the second part - problem and date
-		 */
-
-		// add the problem info
-		// NPPhraseSpec q = nlgFactory.createNounPhrase(RDFdata.get("reason"));
-		SPhraseSpec q = nlgFactory.createClause();
-		q.setObject(RDFdata.get("reason").toString());
-		q.setFeature(Feature.COMPLEMENTISER, "due to");
-		q.setFeature(Feature.TENSE, Tense.PRESENT);
-
-		tweet.addComplement(q);
-
-		// add the start end date info
-
-		SPhraseSpec date = createDatePhrase(RDFdata);
-
-		tweet.addComplement(date);
-
-		String output = realiser.realiseSentence(tweet);
-		// System.out.println(output);
-
-		return tweet;
 	}
 
 	private SPhraseSpec createDateTimeIntervalPhrase(Map<String, Object> RDFdata) {
@@ -951,6 +892,18 @@ public class NLGTemplateProcessor {
 		return delay_length_phrase;
 	}
 
+	private PPPhraseSpec generateDelayLengthPhrase(String delay_length_string) {
+		PPPhraseSpec delay_length_phrase = null;
+		delay_length_phrase = nlgFactory.createPrepositionPhrase();
+
+		if (delay_length_string.length() > 0) {
+			NPPhraseSpec delay = nlgFactory.createNounPhrase(delay_length_string);
+			delay_length_phrase.addComplement(delay);
+		}
+
+		return delay_length_phrase;
+	}
+	
 	private PPPhraseSpec generateProblemReasonPhraseOnly(String problem_reason_string) {
 		PPPhraseSpec problem_phrase = null;
 
@@ -965,10 +918,24 @@ public class NLGTemplateProcessor {
 	}
 
 
+	private SPhraseSpec checkRecipient(Map<String, Object> RDFData, SPhraseSpec tweet){
+		boolean isRecipient=false;
+		if(RDFData.containsKey("recipient"))
+			if(DatabaseManager.isWithinTimeThreshold(RDFData.get("recipient").toString(), NLG_MESSAGE_TIME_THRESHOLD)){
+				isRecipient=true;
+				NPPhraseSpec conjuction = nlgFactory.createNounPhrase("and");
+				tweet.addFrontModifier(conjuction);
+			}
+			
+		return tweet;
+	}
+
+	
 	private SPhraseSpec generateDiversionTweet(Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
-
+		tweet = checkRecipient(RDFdata,tweet);
+		
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
 		CoordinatedPhraseElement buses = generateBusServicesPhrase(bus_services_string);
@@ -1019,6 +986,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1074,6 +1042,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1118,7 +1087,7 @@ public class NLGTemplateProcessor {
 
 		// String output = realiser.realiseSentence(tweet);
 		// System.out.println(output);
-		System.out.println(tweet);
+		//System.out.println(tweet);
 		return tweet;
 	}
 
@@ -1130,6 +1099,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1179,6 +1149,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1222,6 +1193,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		SPhraseSpec phrase1 = nlgFactory.createClause();
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1271,6 +1243,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// first part is "Service 12 diversion"
 		SPhraseSpec first_part = nlgFactory.createClause();
@@ -1311,6 +1284,7 @@ public class NLGTemplateProcessor {
 			Map<String, Object> RDFdata) {
 
 		SPhraseSpec tweet = nlgFactory.createClause();
+		tweet = checkRecipient(RDFdata,tweet);
 
 		// add bus phrase
 		String bus_services_string = (String) RDFdata.get("service");
@@ -1423,7 +1397,7 @@ public class NLGTemplateProcessor {
 		//String folderLocation = "http://sj.abdn.ac.uk/NLG/";
 
 		//String fullPath = context.getRealPath(folderLocation+filename);
-		//String fullPath = context.getRealPath("/WEB-INF/resources/templates.xml");
+		//String fullPath = context.getRealPath("/WEB-INF/resources/"+filename);
 		String fullPath = "http://sj.abdn.ac.uk/NLG/"+filename;
 
 		Document doc = null;
@@ -1443,7 +1417,7 @@ public class NLGTemplateProcessor {
 
 		SPhraseSpec tweet = null;
 		this.server_context = context;
-		
+		boolean isRecipient = false;
 		List<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
 		ArrayList<String> outputArray = new ArrayList<String>();
 
@@ -1483,13 +1457,16 @@ public class NLGTemplateProcessor {
 			paragraphType = "paragraph";
 			break;
 		}
-		
+
 		//check timelog condition for Realtime and Realtime5
+
 		
 		if(RDFData.containsKey("recipient")){
-			if(DatabaseManager.isWithinTimeThreshold(RDFData.get("recipient").toString(), NLG_MESSAGE_TIME_THRESHOLD)
-					&& (paragraphType.equals(KEY_EVENT_REAL_TIME) || paragraphType.equals(KEY_EVENT_REAL_TIME5)))
-				filename = "templates-para-connecting.xml"; 
+			if(DatabaseManager.isWithinTimeThreshold(RDFData.get("recipient").toString(), NLG_MESSAGE_TIME_THRESHOLD)){
+				isRecipient=true;
+				if (paragraphType.equals(KEY_EVENT_REAL_TIME) || paragraphType.equals(KEY_EVENT_REAL_TIME5))
+					filename = "templates-para-connecting.xml";
+			}
 		}
 
 		Document doc = loadXML(context,filename);
@@ -1522,6 +1499,12 @@ public class NLGTemplateProcessor {
 
 					tweet = nlgFactory.createClause();
 
+					if (isRecipient==true && (paragraphType.equals(TEMPLATE_EVENT_DELAY_TAG) || paragraphType.equals(TEMPLATE_EVENT_DIVERSION_TAG) || paragraphType.equals(KEY_EVENT_GENERAL_DISRUPTION))){
+						NPPhraseSpec conjuction = nlgFactory.createNounPhrase("and");
+						tweet.addPostModifier(conjuction);
+						//System.out.println("yaaaaaaaaaaa");
+					}
+					
 					Node template = templates.item(i);
 					NodeList phrases = (NodeList) xpath.evaluate("phrase", template, XPathConstants.NODESET);
 
@@ -1557,7 +1540,7 @@ public class NLGTemplateProcessor {
 
 						}
 						//System.out.println("phraseType: " + phraseType);
-
+						
 						if(phraseType.equals("primary") || phraseType.equals("secondary")){
 							part_phrase_sp = nlgFactory.createClause();
 							part_phrase_sp.setSubject(extractPhraseTagSP(tagValue,RDFData));
@@ -1575,7 +1558,6 @@ public class NLGTemplateProcessor {
 						String preposition_string="";
 
 						//iterate the complements only if the tag is required
-						if(tagRequired.equals("yes"))
 							for(int l = 0; l < complements.getLength(); l++){
 								Node compliment_node = complements.item(l);
 
@@ -1589,6 +1571,7 @@ public class NLGTemplateProcessor {
 								//
 								//String RDFComplementValue = RDFData.get(complementValue).toString();
 								String complementType = complement.getAttribute("type");
+								
 								//check complement 
 								switch (complementType){
 								case "subject"://
@@ -1645,7 +1628,8 @@ public class NLGTemplateProcessor {
 
 						}
 						if(phraseType.equals("primary")){
-							tweet=part_phrase_sp;
+							if(!isRecipient && tagValue.equals(KEY_GREETING))
+								tweet=part_phrase_sp;	
 							//System.out.println(part_phrase_sp.toString());
 						}
 						else{
@@ -1654,8 +1638,8 @@ public class NLGTemplateProcessor {
 							// tweet.addComplement(part_phrase_sp);
 							else if(part_phrase_pp!=null)
 								tweet.addPostModifier(part_phrase_pp);
-							else {
-								System.out.println("falssse");
+							else if(tagRequired.equals("yes")){
+								//System.out.println("falssse");
 								all_true=false;
 								tags_missed++;
 							}
@@ -1673,15 +1657,18 @@ public class NLGTemplateProcessor {
 
 
 				try{
+					
+					tweet = addReportedAtTimestamp(RDFData, tweet);
+					
 					paragraph_string = paragraph_string + realiser.realiseSentence(tweet);
 					//paragraph_string.trim();
 					
-					System.out.println("paragraph_stringL:" + paragraph_string);
+					//System.out.println("paragraph_stringL:" + paragraph_string);
 					Map<String,Object> obj = new HashMap<String,Object>();
 					obj.put("paragraph", paragraph_string);
 					obj.put("tags_missed", tags_missed);
 					obj.put("characters", paragraph_string.length());
-
+					
 					if(ranking.equals("yes"))
 						output.add(obj);
 					else if(ranking.equals("no") && all_true) //if ranking information is not requested
@@ -1731,9 +1718,14 @@ public class NLGTemplateProcessor {
 		List<String> terms_list = new ArrayList<String>();
 		int index=0;
 
+
+		
 		if (terms_string!=null && terms_string.length()>0)
 			terms_list.addAll(Arrays.asList(terms_string.split("\\|")));
 
+		//System.out.println("selectionCertaintyTerm array"+terms_list);
+
+		
 		if(certainty_value>=0 && certainty_value <=0.3)
 			index=0;
 		if(certainty_value>=0.31 && certainty_value <=0.5)
@@ -1743,10 +1735,19 @@ public class NLGTemplateProcessor {
 		if(certainty_value>=0.71)
 			index=3;
 		
-		System.out.println("hererererer"+terms_list.get(index));
+		//System.out.println("selectionCertaintyTerm"+terms_list.get(index));
+		//return "is likely";
 		return terms_list.get(index);
 	}
 	
+	private String createTweetTimestamp(Map<String,Object>RDFData){
+		String timestamp_string="";
+		
+	//	if(RDFData.containsKey("timestamp"))
+			
+		
+		return timestamp_string;
+	}
 	/*
 	 * extractdata for SPPhrase
 	 */
@@ -1818,10 +1819,13 @@ public class NLGTemplateProcessor {
 				element = problem_phrase;
 				break;
 
-			case KEY_DELAY_LENGTH:	
-				String delay_length = (String) RDFData.get(KEY_DELAY_LENGTH);
-				PPPhraseSpec delay_length_phrase = generateProblemReasonPhrase(delay_length);
-				element = delay_length_phrase;
+			case KEY_DELAY_LENGTH:
+				element = nlgFactory.createPrepositionPhrase();
+				if(RDFData.containsKey(KEY_DELAY_LENGTH)){
+					String delay_length = (String) RDFData.get(KEY_DELAY_LENGTH);
+					PPPhraseSpec delay_length_phrase = generateDelayLengthPhrase(delay_length);
+					element = delay_length_phrase;
+				}
 				break;
 			case KEY_START_END_DATETIME:	
 				SPhraseSpec start_end_dateime_phrase = createDatePhrase(RDFData);
@@ -1859,11 +1863,38 @@ public class NLGTemplateProcessor {
 				break;
 			}
 		}
+
 		return element;
 
 	}
 
+	private SPhraseSpec addReportedAtTimestamp( Map<String,Object>RDFData, SPhraseSpec tweet){
+		String event_type = RDFData.get(KEY_EVENT_TYPE).toString();
+		
+		if(RDFData.containsKey(KEY_REPORTED_AT) && 
+				!(event_type.equals(KEY_EVENT_REAL_TIME) || event_type.equals(KEY_EVENT_REAL_TIME5) || event_type.equals(KEY_EVENT_ALL_OK) || event_type.equals(KEY_EVENT_QUESTIONNAIRE)) 
+			){
+			try {
+				String formatter_pattern = "yyyy-MM-dd'T'HH:mm:ss";
+				DateFormat format = new SimpleDateFormat(formatter_pattern);
+				Date date = format.parse(RDFData.get(KEY_REPORTED_AT).toString());
+				
+				SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm a");
+				
+				String date_str = outputFormat.format(date);
+				NPPhraseSpec date_phrase = nlgFactory.createNounPhrase(date_str);
+				tweet.addPostModifier("-reported at");
+				tweet.addPostModifier(date_phrase);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		return tweet;
+	}
 }
+
 
 /*
  * Sample tweets

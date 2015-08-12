@@ -38,7 +38,8 @@ public final class Constants {
     public static final String KEY_DURATION = "duration";
     public static final String KEY_BUS_SERVICE_TIME = "serviceTime";
     public static final String KEY_CERTAINTY = "certainty";
-
+    public static final String KEY_REPORTED_AT = "reportedAt";
+    
     public static final String KEYWORD_START_TIME = "start";
     public static final String KEYWORD_END_TIME = "end";
     public static final String KEYWORD_DIVERSION = "diversion";
