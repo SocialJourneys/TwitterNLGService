@@ -211,7 +211,8 @@ public class NLGTemplateProcessor {
 			System.out.println("selected tweet: "+tweets.get(index));
 			re_tweets.add(tweets.get(index));
 		}else
-			re_tweets.add("No tweet generated");
+			re_tweets.add("null");
+			//re_tweets.add("No tweet generated");
 
 		return re_tweets;
 	}
