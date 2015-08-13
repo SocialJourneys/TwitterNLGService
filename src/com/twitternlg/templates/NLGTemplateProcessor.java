@@ -146,8 +146,30 @@ public class NLGTemplateProcessor {
 	public ArrayList<String> generateTweetss(Map<String, Object> RDFdata, ServletContext context, String is_ranking) {
 		ArrayList<String> tweets = new ArrayList<String>();
 
+		String paragraphType = "";
+
+		if(RDFdata.containsKey(KEY_EVENT_TYPE))
+			paragraphType=RDFdata.get(KEY_EVENT_TYPE).toString();
+
+		
+		switch (paragraphType.toLowerCase()){
+			case "running late":
+			case "delay": 
+			case "delays": {
+			paragraphType = KEY_EVENT_DELAY;
+			break;
+			}
+			case "diversion":
+			case "diverted":
+			case "diversions": {
+			paragraphType = KEY_EVENT_DIVERSION;
+			RDFdata.put(KEY_EVENT_TYPE, KEY_EVENT_DIVERSION);
+			break;
+			}
+		}
+
 		//realiser.realiseSentence(testXPath(context,RDFdata));
-		if(RDFdata.get(KEY_EVENT_TYPE).equals(KEY_EVENT_DIVERSION))
+		if(paragraphType.equals(KEY_EVENT_DIVERSION))
 			tweets = generateTweetsFromCode(RDFdata);
 
 		else{
@@ -1432,6 +1454,25 @@ public class NLGTemplateProcessor {
 		String filename = "templates-para.xml";
 
 
+		if (paragraphType == null) paragraphType = "paragraph";
+
+		switch (paragraphType.toLowerCase()){
+			case "running late":
+			case "delay": 
+			case "delays": {
+			paragraphType = KEY_EVENT_DELAY;
+			break;
+			}
+			case "diversion":
+			case "diverted":
+			case "diversions": {
+			paragraphType = KEY_EVENT_DIVERSION;
+			break;
+			}
+		}
+	
+
+		
 		switch (paragraphType){
 		case KEY_EVENT_DELAY:
 			paragraphType = TEMPLATE_EVENT_DELAY_TAG;
@@ -1455,7 +1496,7 @@ public class NLGTemplateProcessor {
 			paragraphType = KEY_EVENT_GENERAL_DISRUPTION;
 			break;
 		default:
-			paragraphType = "paragraph";
+			paragraphType = KEY_EVENT_GENERAL_DISRUPTION;
 			break;
 		}
 
@@ -1659,7 +1700,7 @@ public class NLGTemplateProcessor {
 
 				try{
 					
-					tweet = addReportedAtTimestamp(RDFData, tweet);
+					tweet = addReportedAtTimestamp(RDFData, tweet, paragraphType);
 					
 					paragraph_string = paragraph_string + realiser.realiseSentence(tweet);
 					//paragraph_string.trim();
@@ -1713,8 +1754,9 @@ public class NLGTemplateProcessor {
 	 * select certainty term based on certainty value
 	 */
 	private String selectionCertaintyTerm(String terms_string,Map<String,Object>RDFData){
-		
-		float certainty_value =  Float.parseFloat(RDFData.get("certainty").toString());
+		float certainty_value = 0.5f;
+		if(RDFData.containsKey("certainty"))
+			certainty_value =  Float.parseFloat(RDFData.get("certainty").toString());
 		
 		List<String> terms_list = new ArrayList<String>();
 		int index=0;
@@ -1869,8 +1911,8 @@ public class NLGTemplateProcessor {
 
 	}
 
-	private SPhraseSpec addReportedAtTimestamp( Map<String,Object>RDFData, SPhraseSpec tweet){
-		String event_type = RDFData.get(KEY_EVENT_TYPE).toString();
+	private SPhraseSpec addReportedAtTimestamp( Map<String,Object>RDFData, SPhraseSpec tweet, String event_type){
+		//String event_type = RDFData.get(KEY_EVENT_TYPE).toString();
 		
 		if(RDFData.containsKey(KEY_REPORTED_AT) && 
 				!(event_type.equals(KEY_EVENT_REAL_TIME) || event_type.equals(KEY_EVENT_REAL_TIME5) || event_type.equals(KEY_EVENT_ALL_OK) || event_type.equals(KEY_EVENT_QUESTIONNAIRE)) 
