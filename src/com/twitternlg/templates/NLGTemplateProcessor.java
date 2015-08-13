@@ -1884,7 +1884,7 @@ public class NLGTemplateProcessor {
 				
 				String date_str = outputFormat.format(date);
 				NPPhraseSpec date_phrase = nlgFactory.createNounPhrase(date_str);
-				tweet.addPostModifier("-reported at");
+				tweet.addPostModifier("reported at");
 				tweet.addPostModifier(date_phrase);
 			} catch (Exception e) {
 				e.printStackTrace();
